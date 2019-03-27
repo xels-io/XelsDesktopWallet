@@ -1,6 +1,6 @@
 # Xels Desktop Wallet
 
-This is the repository of the Xels Desktop Wallet, a full node Hybrid PoW-PoS based wallet using Electron and Angular at the front-end and .NET Core with C# in the back-end.
+This is the repository of the Xels Desktop Wallet, a full node Hybrid PoW-PoS based wallet using Electron and Angular at the front-end and .NET Core with C# in the back-end. It is developed on the Stratis platform. Stratis itself is a PoS based system. It also provides a PoW based implementation for Bitcoin Network. We implemented a mix of PoW and PoS based system to garantee protect the network from 51% attack. For detail please check our website.
 
 # Building and running the Xels fullnode application
 
