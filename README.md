@@ -5,7 +5,7 @@ This is the repository of the Xels Desktop Wallet, a full node Hybrid PoW-PoS ba
 # Building and running the Xels fullnode application
 
 The Xels fullnode daemon is the backend REST service, hosting a Xels node upon which Xels desktop wallet depends.  
-The Xels fullnode application is hosted in another repository. All information on building and running the daemon can be found [here](https://github.com/xels-io/XelsFullNode/README.md).
+The Xels fullnode application is hosted in another repository. All information on building and running the daemon can be found [here](https://github.com/xels-io/XelsFullNode/blob/master/README.md).
 
 # Building and running the Xels Core user interface
 
