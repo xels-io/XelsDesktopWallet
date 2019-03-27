@@ -1,0 +1,31 @@
+
+.btn
+{
+  border-radius: 10px;
+  font-family: arial ,monospace;
+  font-size: 1.2vw;
+}
+.modal button.closemodal i {
+  font-size: 2rem;
+  color: #13600c;
+}
+.btn-outline-light {
+  background-color: #4E9A19;
+  color: #ffffff;
+  border-radius: 12px;
+}
+.btn-outline-light:hover {
+  color: #4E9A19;
+  background-color: #ffffff;
+}
+.btn-primary
+{
+  color: #ffffff;
+  background-color: #4E9A19;
+  border-radius: 12px;
+}
+.btn-primary:hover
+{
+  color: #4E9A19;
+  background-color: #ffffff;
+}

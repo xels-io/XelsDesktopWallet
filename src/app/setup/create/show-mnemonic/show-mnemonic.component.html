@@ -1,0 +1,54 @@
+<section id="GUI" class="container-fluid light">
+  <!-- <app-header></app-header> -->
+  <div class="row">
+
+    <!-- /col -->
+    <div class="col-12 right-login d-flex align-content-center flex-wrap">
+        <div class="col-12">
+            <app-header></app-header>
+          </div>
+      <div class="col-6 mx-auto d-flex align-content-center flex-wrap">
+        <div class="col-12 text-center">
+          <h3 class="display-4 mb-4">Secret Words</h3>
+        </div>
+        <div class="col-10 mnemonics">
+          <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Warning!</h4>
+            <p>Please write down your secret words , password and passphrase.
+            You will need <strong>both</strong> to recover your wallet in the future.</p>
+          </div>
+          <!-- <div class="col-10 row d-flex justify-content-center my-4 mlist"> -->
+            <!-- <ul class="list-inline list-unstyled col">
+              <li *ngFor="let word of mnemonicArray; let i=index" class="list-inline-item">
+                  <br *ngIf="(i + 1) % 4 == 0">
+                <span class="badge-info badge">{{ i+1 }}. {{ word }}</span>
+              </li>
+            </ul> -->
+
+            <table class="greenTable">
+              <tr><td>1. {{mnemonicArray[0]}}</td><td>2. {{mnemonicArray[2]}}</td><td>3. {{mnemonicArray[1]}}</td><td>4. {{mnemonicArray[3]}}</td></tr>
+              <tr><td>5. {{mnemonicArray[4]}}</td><td>6. {{mnemonicArray[6]}}</td><td>7. {{mnemonicArray[5]}}</td><td>8. {{mnemonicArray[7]}}</td></tr>
+              <tr><td>9. {{mnemonicArray[8]}}</td><td>10. {{mnemonicArray[10]}}</td><td>11. {{mnemonicArray[9]}}</td><td>12. {{mnemonicArray[11]}}</td></tr>
+            </table>
+          <!-- </div> -->
+        </div>
+        <div class="modal-footer col-10" id="button-mnemonic">
+          <button type="button" class="btn btn-primary btn-block"
+            ngxClipboard [cbContent]="mnemonic" (click)="onCopiedClick()">Copy to clipboard</button>
+        </div>
+        <div *ngIf="copied" class="modal-footer col-10 align-middle" id="button-mnemonic">
+          <div class="alert alert-danger text-center" role="alert">
+            The copied text will be required to recover your wallet in the future. <br><strong>Paste and keep it safe if you choose to have one</strong>.
+          </div>
+        </div>
+        <div class="modal-footer col-10" id="button-mnemonic">
+          <button type="button" class="btn btn-outline-light" (click)="onCancelClicked()">Cancel</button>
+          <button type="button" class="btn btn-primary btn-block" [disabled]="!copied" (click)="onContinueClicked()">Continue</button>
+        </div>
+      </div>
+    </div>
+    <!-- /col-8 -->
+  </div>
+  <!-- /row -->
+</section>
+<!-- /GUI-->

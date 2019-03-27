@@ -1,0 +1,22 @@
+.top-login {
+  height: 30vh;
+  background: #53b947;
+  min-height: calc(30vh - 0px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: auto;
+  text-align: center;
+}
+
+img{
+  box-shadow: inset 1px 1px 12px 6px #fffafaba;
+  border-color: #f9f1f1f0;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 30%;
+  height: 75%;
+  overflow: hidden;
+}
+
+

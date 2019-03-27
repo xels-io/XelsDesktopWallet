@@ -1,0 +1,88 @@
+.right-login h3
+{
+  font-weight: 150;
+  font-size: 2.5rem;
+  padding-bottom: 0rem;
+}
+.display-4
+{
+  font-family: serif, monospace,-webkit-pictograph , cursive, sans-serif;
+  font-feature-settings: initial;
+}
+.mnemonics{
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.alert-heading
+{
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.badge {
+  display: inline-block;
+  padding: 0.45em 0.75em;
+  font-size: 75%;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  /* border-radius: 0.25rem; */
+}
+.badge-info {
+  font-size: 0.8rem;
+  padding: 0.5rem;
+  margin: .5rem auto;
+  color: black;
+  background-color: #fff;
+  font-family: sans-serif, monospace,Helvetica , serif;
+  font-size: 7rem;
+  font-weight: bold;
+  font-style: inherit;
+}
+.list-inline-item {
+  display: inline-block;
+  max-width: 45%;
+}
+#button-mnemonic
+{
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.mlist
+{
+  /*  margin-left: auto !important;
+  margin-right: auto !important; */
+}
+ .mnemonics .mlist .badge {
+  font-size: .9rem;
+  padding: .5rem;
+  margin: .5rem auto;
+}
+table.greenTable {
+  font-family: Georgia, serif;
+  background-color: #D4EED1;
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+table.greenTable td, table.greenTable th {
+  padding: 3px 2px;
+}
+table.greenTable tbody td {
+  font-size: 13px;
+  font-weight: bold;
+}
+table.greenTable tfoot td {
+  font-size: 13px;
+}
+table.greenTable tfoot .links {
+  text-align: right;
+}
+table.greenTable tfoot .links a{
+  display: inline-block;
+  background: #FFFFFF;
+  color: #24943A;
+  padding: 2px 8px;
+  border-radius: 5px;
+}

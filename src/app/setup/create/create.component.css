@@ -1,0 +1,23 @@
+.right-login h3 {
+  font-weight: 150;
+  font-size: 2.5rem;
+  padding-bottom: 0rem;
+}
+.mb-4, .my-4 {
+   margin-bottom: 0.5rem !important;
+}
+.right-login {
+  min-height: calc(75vh - 20px);
+}
+.display-4
+{
+  font-family: serif, monospace,-webkit-pictograph , cursive, sans-serif;
+  font-feature-settings: initial;
+}
+.label
+{
+  display: inline-block;
+  margin-bottom: .5rem;
+  font-family: initial;
+  font-weight: bold;
+}

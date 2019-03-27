@@ -1,0 +1,23 @@
+
+.btn-block
+{
+  background-color: #ffffff;
+  color: #53b947;
+  border-radius: 15px;
+}
+.btn-link
+{
+  color: #fdfffd;
+}
+.btn-outline-secondary {
+  color:#ececfd;
+  background-color: #4e9a19;
+  background-image: none;
+  border-color: #f8f9fa;
+}
+.nav-item a
+{
+  background-color: #ffffff;
+  color: #53b947;
+}
+

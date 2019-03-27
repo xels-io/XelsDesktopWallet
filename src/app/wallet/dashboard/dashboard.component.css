@@ -1,0 +1,55 @@
+.Trans-Section
+{
+  /* border: 2px solid #53b947; */
+}
+.text-right
+{
+  text-align: right !important;
+  flex: 0 0 60%;
+  max-width: 100%;
+  margin-left: 2%;
+}
+.card
+{
+  border: 1px solid #53b947;
+
+}
+.nav-link.active
+{
+  background-color: none;
+  color:#ffffff;
+}
+.card-header
+{
+  text-align: left;
+  color: #59666d;
+}
+.btn-section
+{
+  padding-top: 1%;
+}
+.btn-section :hover
+{
+  cursor: pointer;
+}
+.btn {
+  border-radius: 12px;
+}
+.btn-outline-light
+{
+  color: #53b947;
+  border-color: #4e9a19;
+}
+.btn-outline-light:hover {
+  color: #fff;
+  background-color: #53b947;
+  border-color: #4e9a19;
+}
+.receive
+{
+  padding-left: 2%;
+}
+.send
+{
+  padding-left:5%;
+}
