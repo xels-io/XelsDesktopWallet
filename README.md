@@ -1,4 +1,4 @@
-# Xels Core
+# Xels Desktop Wallet
 
 This is the repository of the Xels Desktop Wallet, a full node Hybrid PoW-PoS based wallet using Electron and Angular at the front-end and .NET Core with C# in the back-end.
 
