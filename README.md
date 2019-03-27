@@ -18,17 +18,12 @@ Download and install the latest Long Term Support (LTS) version of NodeJS at: ht
 Clone this repository locally:
 
 ``` bash
-git clone https://www.github.com/xelsproject/XelsCore
-```
-
-Navigate to the XelsCore.UI folder in a terminal:
-``` bash
-cd ./XelsCore/XelsCore.UI
+git clone https://github.com/xels-io/XelsDesktopWallet.git
 ```
 
 ## Install dependencies with npm:
 
-From within the XelsCore.UI directory run:
+From within the directory run:
 
 ``` bash
 npm install
@@ -37,7 +32,7 @@ npm install
 ## Run the UI in development mode
 
 #### Terminal Window 1
-[Run the daemon](https://github.com/xelsproject/XelsBitcoinFullNode/blob/master/Documentation/getting-started.md)  
+[Run the daemon](https://github.com/xels-io/XelsFullNode/blob/master/README.md)  
 
 #### Terminal Window 2
 Use `npm run mainnet` to start the UI in mainnet mode or `npm run testnet` to start the UI in testnet mode.  
