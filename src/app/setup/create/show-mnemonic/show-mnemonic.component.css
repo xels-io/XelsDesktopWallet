@@ -40,29 +40,16 @@
   font-weight: bold;
   font-style: inherit;
 }
-.list-inline-item {
-  display: inline-block;
-  max-width: 45%;
-}
+
 #button-mnemonic
 {
   margin-left: auto !important;
   margin-right: auto !important;
 }
-.mlist
-{
-  /*  margin-left: auto !important;
-  margin-right: auto !important; */
-}
- .mnemonics .mlist .badge {
-  font-size: .9rem;
-  padding: .5rem;
-  margin: .5rem auto;
-}
 table.greenTable {
   font-family: Georgia, serif;
   background-color: #D4EED1;
-  width: 100%;
+  width: 90%;
   text-align: left;
   border-collapse: collapse;
 }

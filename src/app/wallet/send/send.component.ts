@@ -1,18 +1,19 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 
-import { ApiService } from '../../shared/services/api.service';
-import { GlobalService } from '../../shared/services/global.service';
-import { ModalService } from '../../shared/services/modal.service';
-import { CoinNotationPipe } from '../../shared/pipes/coin-notation.pipe';
+import { ApiService } from '@shared/services/api.service';
+import { GlobalService } from '@shared/services/global.service';
+import { ModalService } from '@shared/services/modal.service';
+import { CoinNotationPipe } from '@shared/pipes/coin-notation.pipe';
+import { NumberToStringPipe } from '@shared/pipes/number-to-string.pipe';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { FeeEstimation } from '../../shared/models/fee-estimation';
-import { SidechainFeeEstimation } from '../../shared/models/sidechain-fee-estimation';
-import { TransactionBuilding } from '../../shared/models/transaction-building';
-import { TransactionSending } from '../../shared/models/transaction-sending';
-import { WalletInfo } from '../../shared/models/wallet-info';
+import { FeeEstimation } from '@shared/models/fee-estimation';
+import { SidechainFeeEstimation } from '@shared/models/sidechain-fee-estimation';
+import { TransactionBuilding } from '@shared/models/transaction-building';
+import { TransactionSending } from '@shared/models/transaction-sending';
+import { WalletInfo } from '@shared/models/wallet-info';
 
 import { SendConfirmationComponent } from './send-confirmation/send-confirmation.component';
 
@@ -41,10 +42,12 @@ export class SendComponent implements OnInit, OnDestroy {
   public estimatedFee: number = 0;
   public estimatedSidechainFee: number = 0;
   public totalBalance: number = 0;
+  public spendableBalance: number = 0;
   public apiError: string;
   public firstTitle: string;
   public secondTitle: string;
-  public opReturnAmount: number = 1000;
+  public opReturnAmount: number = 1;
+  public confirmationText: string;
   private transactionHex: string;
   private responseMessage: any;
   private transaction: TransactionBuilding;
@@ -64,6 +67,8 @@ export class SendComponent implements OnInit, OnDestroy {
     if (this.address) {
       this.sendForm.patchValue({'address': this.address})
     }
+
+    this.confirmationText = this.sidechainEnabled ? 'Please note that sending from a sidechain to the mainchain requires 240 confirmations.' : 'Please note that sending from the mainchain to a sidechain requires 500 confirmations.';
   }
 
   ngOnDestroy() {
@@ -73,7 +78,7 @@ export class SendComponent implements OnInit, OnDestroy {
   private buildSendForm(): void {
     this.sendForm = this.fb.group({
       "address": ["", Validators.compose([Validators.required, Validators.minLength(26)])],
-      "amount": ["", Validators.compose([Validators.required, Validators.pattern(/^([0-9]+)?(\.[0-9]{0,8})?$/), Validators.min(0.00001), (control: AbstractControl) => Validators.max((this.totalBalance - this.estimatedFee)/100000000)(control)])],
+      "amount": ["", Validators.compose([Validators.required, Validators.pattern(/^([0-9]+)?(\.[0-9]{0,8})?$/), Validators.min(0.00001), (control: AbstractControl) => Validators.max((this.spendableBalance - this.estimatedFee)/100000000)(control)])],
       "fee": ["medium", Validators.required],
       "password": ["", Validators.required]
     });
@@ -86,7 +91,7 @@ export class SendComponent implements OnInit, OnDestroy {
     this.sendToSidechainForm = this.fb.group({
       "federationAddress": ["", Validators.compose([Validators.required, Validators.minLength(26)])],
       "destinationAddress": ["", Validators.compose([Validators.required, Validators.minLength(26)])],
-      "amount": ["", Validators.compose([Validators.required, Validators.pattern(/^([0-9]+)?(\.[0-9]{0,8})?$/), Validators.min(0.00001), (control: AbstractControl) => Validators.max((this.totalBalance - this.estimatedFee)/100000000)(control)])],
+      "amount": ["", Validators.compose([Validators.required, Validators.pattern(/^([0-9]+)?(\.[0-9]{0,8})?$/), Validators.min(1), (control: AbstractControl) => Validators.max((this.spendableBalance - this.estimatedFee)/100000000)(control)])],
       "fee": ["medium", Validators.required],
       "password": ["", Validators.required]
     });
@@ -152,8 +157,8 @@ export class SendComponent implements OnInit, OnDestroy {
     'amount': {
       'required': 'An amount is required.',
       'pattern': 'Enter a valid transaction amount. Only positive numbers and no more than 8 decimals are allowed.',
-      'min': "The amount has to be more or equal to 0.00001 Xels.",
-      'max': 'The total transaction amount exceeds your available balance.'
+      'min': "The amount has to be more or equal to 0.00001.",
+      'max': 'The total transaction amount exceeds your spendable balance.'
     },
     'fee': {
       'required': 'A fee is required.'
@@ -183,8 +188,8 @@ export class SendComponent implements OnInit, OnDestroy {
     'amount': {
       'required': 'An amount is required.',
       'pattern': 'Enter a valid transaction amount. Only positive numbers and no more than 8 decimals are allowed.',
-      'min': "The amount has to be more or equal to 0.00001 Xels.",
-      'max': 'The total transaction amount exceeds your available balance.'
+      'min': "The amount has to be more or equal to 1.",
+      'max': 'The total transaction amount exceeds your spendable balance.'
     },
     'fee': {
       'required': 'A fee is required.'
@@ -305,7 +310,7 @@ export class SendComponent implements OnInit, OnDestroy {
       true,
       false,
       this.sendToSidechainForm.get("destinationAddress").value.trim(),
-      this.opReturnAmount / 100000000
+      new NumberToStringPipe().transform((this.opReturnAmount / 100000000))
     );
 
     this.apiService.buildTransaction(this.transaction)
@@ -360,6 +365,7 @@ export class SendComponent implements OnInit, OnDestroy {
             let balanceResponse = response;
             //TO DO - add account feature instead of using first entry in array
             this.totalBalance = balanceResponse.balances[0].amountConfirmed + balanceResponse.balances[0].amountUnconfirmed;
+            this.spendableBalance = balanceResponse.balances[0].spendableAmount;
         },
         error => {
           if (error.status === 0) {

@@ -14,12 +14,12 @@
 .nav-link {
   display: block;
   padding: $nav-link-padding-y;
-  color: $gray-600;
+  color: $white;
 
 
   @include hover-focus {
-    text-decoration: none;
-    color: $link-color;
+    text-decoration: underline;
+
   }
 
   &.active {color: $link-color !important;}

@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
-import { ApiService } from '../../shared/services/api.service';
-import { GlobalService } from '../../shared/services/global.service';
-import { ModalService } from '../../shared/services/modal.service';
+import { ApiService } from '@shared/services/api.service';
+import { GlobalService } from '@shared/services/global.service';
+import { ModalService } from '@shared/services/modal.service';
 
-import { WalletInfo } from '../../shared/models/wallet-info';
-import { TransactionInfo } from '../../shared/models/transaction-info';
+import { WalletInfo } from '@shared/models/wallet-info';
+import { TransactionInfo } from '@shared/models/transaction-info';
 
 import { Subscription } from 'rxjs';
 
@@ -83,7 +83,7 @@ export class HistoryComponent {
       } else if (transaction.type === "received") {
         transactionType = "received";
       } else if (transaction.type === "staked") {
-        transactionType = "reward";
+        transactionType = "rewarded";
       }
       let transactionId = transaction.id;
       let transactionAmount = transaction.amount;

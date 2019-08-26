@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
-import { ApiService } from '../../shared/services/api.service';
-import { GlobalService } from '../../shared/services/global.service';
-import { ModalService } from '../../shared/services/modal.service';
-import { WalletInfo } from '../../shared/models/wallet-info';
-import { TransactionInfo } from '../../shared/models/transaction-info';
+import { ApiService } from '@shared/services/api.service';
+import { GlobalService } from '@shared/services/global.service';
+import { ModalService } from '@shared/services/modal.service';
+import { WalletInfo } from '@shared/models/wallet-info';
+import { TransactionInfo } from '@shared/models/transaction-info';
 
 import { SendComponent } from '../send/send.component';
 import { ReceiveComponent } from '../receive/receive.component';
@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./dashboard.component.css']
 })
 
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private apiService: ApiService, private globalService: GlobalService, private modalService: NgbModal, private genericModalService: ModalService, private router: Router, private fb: FormBuilder) {
     this.buildStakingForm();
   }
@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
   public coinUnit: string;
   public confirmedBalance: number;
   public unconfirmedBalance: number;
+  public spendableBalance: number;
   public transactionArray: TransactionInfo[];
   private stakingForm: FormGroup;
   private walletBalanceSubscription: Subscription;
@@ -47,6 +48,16 @@ export class DashboardComponent implements OnInit {
   public isStopping: boolean;
   public hasBalance: boolean = false;
 
+  private generalWalletInfoSubscription: Subscription;
+  public lastBlockSyncedHeight: number;
+  public chainTip: number;
+  private isChainSynced: boolean;
+  public connectedNodes: number = 0;
+  public percentSyncedNumber: number = 0;
+  public percentSynced: string;
+  blockChainStatus = '';
+  connectedNodesStatus = '';
+
   ngOnInit() {
     this.sidechainEnabled = this.globalService.getSidechainEnabled();
     this.walletName = this.globalService.getWalletName();
@@ -56,7 +67,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnDestroy() {
     this.cancelSubscriptions();
-  };
+  }
 
   private buildStakingForm(): void {
     this.stakingForm = this.fb.group({
@@ -69,12 +80,10 @@ export class DashboardComponent implements OnInit {
   }
 
   public openSendDialog() {
-    console.log("adsf");
     const modalRef = this.modalService.open(SendComponent, { backdrop: "static", keyboard: false });
-  };
+  }
 
   public openReceiveDialog() {
-    console.log("a");
     const modalRef = this.modalService.open(ReceiveComponent, { backdrop: "static", keyboard: false });
   };
 
@@ -89,9 +98,10 @@ export class DashboardComponent implements OnInit {
       .subscribe(
         response =>  {
           let balanceResponse = response;
-          //TO DO - add account feature instead of using first entry in array
+          // TO DO - add account feature instead of using first entry in array
           this.confirmedBalance = balanceResponse.balances[0].amountConfirmed;
           this.unconfirmedBalance = balanceResponse.balances[0].amountUnconfirmed;
+          this.spendableBalance = balanceResponse.balances[0].spendableAmount;
           if ((this.confirmedBalance + this.unconfirmedBalance) > 0) {
             this.hasBalance = true;
           } else {
@@ -110,16 +120,16 @@ export class DashboardComponent implements OnInit {
         }
       )
     ;
-  };
+  }
 
   // todo: add history in seperate service to make it reusable
   private getHistory() {
-    let walletInfo = new WalletInfo(this.globalService.getWalletName());
+    const walletInfo = new WalletInfo(this.globalService.getWalletName());
     let historyResponse;
     this.walletHistorySubscription = this.apiService.getWalletHistory(walletInfo)
       .subscribe(
         response => {
-          //TO DO - add account feature instead of using first entry in array
+          // TO DO - add account feature instead of using first entry in array
           if (!!response.history && response.history[0].transactionsHistory.length > 0) {
             historyResponse = response.history[0].transactionsHistory;
             this.getTransactionInfo(historyResponse);
@@ -149,7 +159,7 @@ export class DashboardComponent implements OnInit {
       } else if (transaction.type === "received") {
         transactionType = "received";
       } else if (transaction.type === "staked") {
-        transactionType = "reward";
+        transactionType = "rewarded";
       }
       let transactionId = transaction.id;
       let transactionAmount = transaction.amount;
@@ -169,15 +179,16 @@ export class DashboardComponent implements OnInit {
   private startStaking() {
     this.isStarting = true;
     this.isStopping = false;
-    let walletData = {
+    const walletData = {
       name: this.globalService.getWalletName(),
       password: this.stakingForm.get('walletPassword').value
-    }
+    };
     this.apiService.startStaking(walletData)
       .subscribe(
         response =>  {
           this.stakingEnabled = true;
           this.stakingForm.patchValue({ walletPassword: "" });
+          this.getStakingInfo();
         },
         error => {
           this.isStarting = false;
@@ -204,14 +215,12 @@ export class DashboardComponent implements OnInit {
     this.stakingInfoSubscription = this.apiService.getStakingInfo()
       .subscribe(
         response =>  {
-          let stakingResponse = response
+          const stakingResponse = response;
           this.stakingEnabled = stakingResponse.enabled;
           this.stakingActive = stakingResponse.staking;
           this.stakingWeight = stakingResponse.weight;
           this.netStakingWeight = stakingResponse.netStakeWeight;
-          if (this.unconfirmedBalance && this.confirmedBalance) {
-            this.awaitingMaturity = (this.unconfirmedBalance + this.confirmedBalance) - this.stakingWeight;
-          }
+          this.awaitingMaturity = (this.unconfirmedBalance + this.confirmedBalance) - this.spendableBalance;
           this.expectedTime = stakingResponse.expectedTime;
           this.dateTime = this.secondsToString(this.expectedTime);
           if (this.stakingActive) {
@@ -233,8 +242,7 @@ export class DashboardComponent implements OnInit {
     ;
   }
 
-  private secondsToString(seconds: number)
-  {
+  private secondsToString(seconds: number) {
     let numDays = Math.floor(seconds / 86400);
     let numHours = Math.floor((seconds % 86400) / 3600);
     let numMinutes = Math.floor(((seconds % 86400) % 3600) / 60);
@@ -284,13 +292,64 @@ export class DashboardComponent implements OnInit {
     if (this.stakingInfoSubscription) {
       this.stakingInfoSubscription.unsubscribe();
     }
-  };
+  }
 
   private startSubscriptions() {
+    this.getGeneralWalletInfo();
     this.getWalletBalance();
     this.getHistory();
     if (!this.sidechainEnabled) {
       this.getStakingInfo();
     }
   }
+
+  private getGeneralWalletInfo() {
+    let walletInfo = new WalletInfo(this.globalService.getWalletName())
+    this.generalWalletInfoSubscription = this.apiService.getGeneralInfo(walletInfo)
+      .subscribe(
+        response =>  {
+          let generalWalletInfoResponse = response;
+          this.lastBlockSyncedHeight = generalWalletInfoResponse.lastBlockSyncedHeight;
+          this.chainTip = generalWalletInfoResponse.chainTip;
+          this.isChainSynced = generalWalletInfoResponse.isChainSynced;
+          this.connectedNodes = generalWalletInfoResponse.connectedNodes;
+
+          const processedText = `Processed ${this.lastBlockSyncedHeight || '0'} out of ${this.chainTip} blocks.`;
+          this.blockChainStatus = `Synchronizing.  ${processedText}`;
+
+          if (this.connectedNodes == 1) {
+              this.connectedNodesStatus = "1 connection";
+          } else if (this.connectedNodes >= 0) {
+              this.connectedNodesStatus = `${this.connectedNodes} connections`;
+          }
+
+          if(!this.isChainSynced) {
+            this.percentSynced = "syncing...";
+          }
+          else {
+            this.percentSyncedNumber = ((this.lastBlockSyncedHeight / this.chainTip) * 100);
+            if (this.percentSyncedNumber.toFixed(0) === "100" && this.lastBlockSyncedHeight != this.chainTip) {
+              this.percentSyncedNumber = 99;
+            }
+
+            this.percentSynced = this.percentSyncedNumber.toFixed(0) + '%';
+
+            if (this.percentSynced === '100%') {
+              this.blockChainStatus = `Up to date.  ${processedText}`;
+            }
+          }
+        },
+        error => {
+          if (error.status === 0) {
+            this.cancelSubscriptions();
+          } else if (error.status >= 400) {
+            if (!error.error.errors[0].message) {
+              this.cancelSubscriptions();
+              this.startSubscriptions();
+            }
+          }
+        }
+      )
+    ;
+  };
 }

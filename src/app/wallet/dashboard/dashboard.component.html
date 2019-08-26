@@ -1,255 +1,157 @@
-<section id="GUI" class="light" style="margin-left: 5% !important;">
-  <!-- CONTAINER -->
-  <section id="content" class="col-12 mx-auto">
-    <!-- JUMBOTRON-->
-    <div class="jumbotron jumbotron-fluid">
-      <div class="col-12">
-        <div class="balance">
-          <h5>Available Balance</h5>
-          <p class="lead">
-            <strong>{{
-              (confirmedBalance | coinNotation) || (0 | coinNotation)
-            }}</strong>
-            <small class="text-uppercase"> {{ coinUnit }}</small>
-          </p>
-          <ul class="list-unstyled">
-            <li>
-              <strong>{{
-                (unconfirmedBalance | coinNotation) || (0 | coinNotation)
-              }}</strong
-              ><em> (unconfirmed)</em>
-            </li>
-            <!-- <li><strong>805.65900153</strong> <em>(staking)</em></li> -->
-          </ul>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4 text-left">
-          <section *ngIf="hasBalance && !sidechainEnabled">
-            <div class="card" *ngIf="!stakingEnabled">
-              <div class="card-header">Staking</div>
-              <div class="card-body">
-                <div class="alert alert-info text-center" role="alert">
-                  Unlock your wallet to start staking
+<section id="GUI" class="light">
+  <section id="content" class="col-11 mx-auto">
+      <div class="jumbotron jumbotron-fluid">
+        <div class="row">
+            <section class="col-3" *ngIf="hasBalance && !sidechainEnabled">
+                <div class="card" *ngIf="!stakingEnabled">
+                  <div class="card-header">Staking Info</div>
+                  <div class="card-body">
+                    <div class="alert alert-info text-center" role="alert">Unlock your wallet to start staking</div>
+                    <form class="form-inline mb-3" [formGroup]="stakingForm">
+                      <div class="form-group">
+                        <label for="inputPassword" class="sr-only">Password</label>
+                        <input type="password" formControlName="walletPassword" class="form-control" id="inputPassword" placeholder="Password">
+                        <button type="button" id="flipcard" class="btn btn-outline-primary ml-2" [disabled]="isStarting || !stakingForm.valid" (click)="startStaking()">Unlock</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-                <form class="form-inline mb-3" [formGroup]="stakingForm">
-                  <div class="form-group">
-                    <label for="inputPassword" class="sr-only">Password</label>
-                    <input
-                      type="password"
-                      formControlName="walletPassword"
-                      class="form-control"
-                      id="inputPassword"
-                      placeholder="Password"
-                    />
-                    <button
-                      type="button"
-                      id="flipcard"
-                      class="btn btn-outline-primary ml-2"
-                      [disabled]="isStarting || !stakingForm.valid"
-                      (click)="startStaking()"
-                    >
-                      Unlock
-                    </button>
+                <div id="staking" class="card" *ngIf="stakingEnabled">
+                  <div class="card-header">
+                    <span class="d-inline-block col-12 row">Staking Info</span>
                   </div>
-                </form>
-              </div>
-            </div>
-
-            <div id="staking" class="card" *ngIf="stakingEnabled">
-              <div class="card-header">
-                <span class="d-inline-block col-10 row">Staking</span>
-              </div>
-              <div class="card-body">
-                <ul class="list-unstyled mb-3">
-                  <li *ngIf="isStarting">Waiting for staking to start...</li>
-                  <div *ngIf="!isStarting">
-                    <li>
-                      Staking weight:
-                      <strong
-                        >{{ stakingWeight | coinNotation | number: "1.0-0" }}
-                        {{ coinUnit }}</strong
-                      >
-                    </li>
-                    <li>
-                      Coins awaiting maturity:
-                      <strong
-                        >{{
-                          awaitingMaturity | coinNotation | number: "1.0-0"
-                        }}
-                        {{ coinUnit }}</strong
-                      >
-                    </li>
-                    <li>
-                      Network weight:
-                      <strong
-                        >{{
-                          netStakingWeight | coinNotation | number: "1.0-0"
-                        }}
-                        {{ coinUnit }}</strong
-                      >
-                    </li>
-                    <li class="mt-2">Expected reward time is:</li>
-                    <li>
-                      <strong>{{ dateTime }}</strong>
-                    </li>
+                  <div class="card-body">
+                    <ul class="list-unstyled mb-3">
+                      <li *ngIf="isStarting">Waiting for staking to start...</li>
+                      <div *ngIf="!isStarting">
+                        <li>Staking weight: <strong>{{ stakingWeight | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
+                        <li>Coins awaiting maturity: <strong>{{ awaitingMaturity | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
+                        <li>Network weight: <strong>{{ netStakingWeight | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
+                        <li class="mt-2">Expected reward time is:</li>
+                        <li><strong>{{ dateTime }}</strong></li>
+                      </div>
+                    </ul>
+                    <button type="button" class="btn btn-outline-light mb-3" [disabled]="isStopping" (click)="stopStaking()">Stop Staking</button>
                   </div>
+                </div>
+              </section>
+          <div class="col-6">
+            <div class="row d-flex align-items-center">
+              <div class="col-12 text-center">
+                <h5>Available Balance</h5>
+                <p class="lead">
+                  <strong>{{ (confirmedBalance | coinNotation) || (0 | coinNotation) }}</strong>
+                  <small class="text-uppercase"> {{ coinUnit }}</small>
+                </p>
+                <ul class="list-unstyled">
+                  <!-- <li><strong>{{ (awaitingMaturity | coinNotation) || (0 | coinNotation) }}</strong><em> (staking)</em></li> -->
+                  <li><strong>{{ (unconfirmedBalance | coinNotation) || (0 | coinNotation) }}</strong><em> (unconfirmed)</em></li>
+                  <!-- <li><strong>805.65900153</strong> <em>(staking)</em></li> -->
                 </ul>
-                <button
-                  type="button"
-                  class="btn btn-outline-light mb-3"
-                  [disabled]="isStopping"
-                  (click)="stopStaking()"
-                >
-                  Stop Staking
-                </button>
               </div>
             </div>
-          </section>
-          <section class="btn-section">
-              <div class="row" style="margin-left: 1% !important;">
-                <div (click)="openReceiveDialog()">
-                  <a class="receive">
-                    <img src="./assets/images/receive_icon.png" alt="Click for a receive address." />
+            <div class="row d-flex align-items-center">
+              <div class="col-12 text-center">
+                <p>
+                  <a class="btn btn-lg btn-primary" (click)="openReceiveDialog()" [class.btn-secondary]="sidechainEnabled">
+                    <i class="icon lnr lnr-gift"></i>
+                    <span class="text-center text-uppercase">Receive</span>
                   </a>
-                </div>
-                <div (click)="openSendDialog()" >
-                  <a class="send">
-                    <img src="./assets/images/send_icon.png" alt="Click for send coin" />
+                  <a class="btn btn-lg btn-primary ml-2" (click)="openSendDialog()" [class.btn-secondary]="sidechainEnabled">
+                    <i class="icon lnr lnr-rocket"></i>
+                    <span class="text-center text-uppercase">Send</span>
                   </a>
-                </div>
+                </p>
               </div>
+            </div>
+          </div>
+          <section class="col-3">
+              <div id="connection" class="card">
+                  <div class="card-header">
+                    <span class="d-inline-block col-12 row">Connection Info</span>
+                    <div class="text-right">
+                    <li *ngIf="!(percentSynced == '100%')" class="list-inline-item mx-1" placement="top" ngbTooltip="{{blockChainStatus}}">
+                        <i class="lnr lnr-sync text-warning"></i>
+                        <small class="text-warning">{{ percentSynced }}</small>
+                      </li>
+                      <li *ngIf="percentSynced == '100%'" class="list-inline-item mx-1" placement="top" ngbTooltip="{{blockChainStatus}}">
+                        <i class="lnr lnr-sync text-success"></i>
+                        <small class="text-success">{{ percentSynced }}</small>
+                      </li>
+                      <li class="list-inline-item mx-1" placement="top" ngbTooltip="{{ connectedNodesStatus }}">
+                        <i class="lnr lnr-users text-success"></i>
+                        <small class="text-black">  {{ connectedNodes }}</small>
+                      </li>
+                      <li *ngIf="!stakingEnabled && !sidechainEnabled" class="list-inline-item mx-1" placement="top" ngbTooltip="Not staking">
+                        <i class="lnr lnr-thumbs-down text-danger"></i>
+                      </li>
+                      <li *ngIf="stakingEnabled && !sidechainEnabled" class="list-inline-item mx-1" placement="top" ngbTooltip="Staking">
+                        <i class="lnr lnr-thumbs-up text-success"></i>
+                      </li>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <ul class="list-unstyled mb-3">
+                      <div class="text-right">
+                      <div class="alert alert-info text-right" role="alert">
+                        <!-- <li><strong>Blockchain Status: {{blockChainStatus}}</strong></li> -->
+                        <li><strong>Connection Status: {{connectedNodesStatus}}  </strong></li>
+                        <li><strong>Last Block Synced Height: {{lastBlockSyncedHeight}}  </strong></li>
+                        <li><strong>Chain Tip: {{chainTip}}  </strong></li>
+                        <li><strong>Percent Synced: {{percentSynced}}  </strong></li>
+                      </div>
+                    </div>
+                    </ul>
+                  </div>
+                </div>
           </section>
         </div>
-        <!-- /col-->
-        <div class="col-6 col text-right">
-          <!-- CONTENT -->
-          <section class="Trans-Section">
-            <!-- NO TRANSACTIONS -->
-            <div class="row">
-              <ng-template #noTransactions>
+        <div style="display: block; height:5%;"> <br /> </div>
+        <div class="col-12">
+          <div class="row d-flex align-items-center">
+            <ng-template #noTransactions>
                 <section class="col-12 text-center my-4">
-                  <img
-                    src="./assets/images/notransactions.svg"
-                    alt="Click the down arrow for a receive address."
-                  />
+                  <img src="./assets/images/notransactions.svg" alt="Click the down arrow for a receive address.">
                 </section>
                 <div class="col-12 text-center">
                   <p>Click the down arrow for a receive address.</p>
                 </div>
-              </ng-template>
-            </div>
-            <!-- /NO TRANSACTIONS -->
-            <!-- TRANSACTIONS -->
-            <div class="col-12" *ngIf="transactionArray; else noTransactions">
+            </ng-template>
+          </div>
+
+          <div class="row d-flex align-items-center" *ngIf="transactionArray; else noTransactions">
+            <div class="col-12 text-center">
               <div class="card">
                 <div class="card-header">Latest Transactions</div>
                 <div class="card-body">
                   <table class="table table-sm">
-                    <tbody
-                      *ngFor="
-                        let transaction of transactionArray;
-                        let i = index
-                      "
-                    >
-                      <tr *ngIf="i < 5">
-                        <th
-                          class="text-center"
-                          *ngIf="!transaction.transactionConfirmedInBlock"
-                        >
-                          <span class="bubble bg-warning"></span>
-                        </th>
-                        <th
-                          class="text-center"
-                          *ngIf="transaction.transactionConfirmedInBlock"
-                        >
-                          <span class="bubble bg-success"></span>
-                        </th>
-                        <td class="text-uppercase text-left">
-                          {{ transaction.transactionType }}
-                        </td>
-                        <td
-                          class="text-left"
-                          *ngIf="transaction.transactionType == 'sent'"
-                        >
-                          <strong
-                            >-
-                            {{
-                              transaction.transactionAmount +
-                                transaction.transactionFee | coinNotation
-                            }}
-                            {{ coinUnit }}</strong
-                          >
-                        </td>
-                        <td
-                          class="text-left"
-                          *ngIf="transaction.transactionType == 'received'"
-                        >
-                          <strong
-                            >+
-                            {{
-                              transaction.transactionAmount +
-                                transaction.transactionFee | coinNotation
-                            }}
-                            {{ coinUnit }}</strong
-                          >
-                        </td>
-                        <td
-                          class="text-left"
-                          *ngIf="transaction.transactionType == 'reward'"
-                        >
-                          <strong
-                            >+
-                            {{
-                              transaction.transactionAmount +
-                                transaction.transactionFee | coinNotation
-                            }}
-                            {{ coinUnit }}</strong
-                          >
-                        </td>
-                        <td class="text-left">
-                          {{
-                            transaction.transactionTimestamp * 1000
-                              | date: "medium"
-                          }}
-                        </td>
-                        <td class="text-center">
-                          <a
-                            class="link-details"
-                            (click)="openTransactionDetailDialog(transaction)"
-                            >details</a
-                          >
-                        </td>
+                    <tbody *ngFor="let transaction of transactionArray; let i=index">
+                      <tr *ngIf="i<5">
+                        <th class="text-center" *ngIf="!transaction.transactionConfirmedInBlock"><span class="bubble bg-warning"></span></th>
+                        <th class="text-center" *ngIf="transaction.transactionConfirmedInBlock"><span class="bubble bg-success"></span></th>
+                        <td class="text-uppercase text-left">{{ transaction.transactionType }}</td>
+                        <td class="text-left" *ngIf="transaction.transactionType == 'sent'"><strong>- {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                        <td class="text-left" *ngIf="transaction.transactionType == 'received'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                        <td class="text-left" *ngIf="transaction.transactionType == 'rewarded'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                        <td class="text-left">{{ transaction.transactionTimestamp * 1000 | date:'medium' }}</td>
+                        <td class="text-center"><a class="link" (click)="openTransactionDetailDialog(transaction)">details</a></td>
                       </tr>
                     </tbody>
                   </table>
                   <div class="text-center my-2">
-                    <button
-                      type="button"
-                      class="btn btn-outline-primary"
-                      (click)="goToHistory()"
-                    >
-                      Go to History
-                    </button>
+                    <button type="button" class="btn btn-outline-primary" [class.btn-outline-xels-green]="sidechainEnabled" (click)="goToHistory()">Go to History</button>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- /TRANSACTIONS -->
-            <!-- STAKING -->
-            <!-- STAKING -->
-          </section>
-          <!-- /CONTENT -->
+            </div>
         </div>
-        <!-- /col-->
-      </div>
+        <div style="display: block; height:5%;"> <br /> </div>
+        <div class="col-12">
+          <!-- <app-address-book></app-address-book> -->
+        </div>
 
-      <!-- /row-->
-      <status-bar></status-bar>
-      <!-- /col-->
-    </div>
-    <!-- /JUMBOTRON-->
+      </div>
   </section>
-  <!-- /CONTAINER-->
 </section>
 <!-- /GUI-->

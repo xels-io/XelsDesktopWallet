@@ -7,10 +7,10 @@
 
                     <div class="col-4">
                         <div class="card">
-                            <div class="card-header">Balance</div>
+                            <div class="card-header">Address Balance</div>
                             <div class="card-body d-flex align-items-center">
                                 <p class="sub">
-                                    <sc-balance [balance]="balance" [coinUnit]="coinUnit"></sc-balance>                                    
+                                    <sc-balance [balance]="balance" [coinUnit]="coinUnit"></sc-balance>
                                 </p>
                             </div>
                         </div>
@@ -18,7 +18,7 @@
 
                     <div class="col-5">
                         <div class="card">
-                            <div class="card-header">My address</div>
+                            <div class="card-header">Active address</div>
                             <div class="card-body d-flex align-items-center">
                                 <div style="display: flex; flex-direction: row">
                                     <select class="form-control" [(ngModel)]="selectedAddress" [ngModelOptions]="{standalone: true}"
@@ -36,10 +36,10 @@
                     </div>
 
                     <div class="col-3">
-                        <button type="button" class="btn btn-outline-purple btn-block" data-toggle="modal" data-target="#modalCalltx"
+                        <button type="button" class="btn btn-outline-xels-green btn-block" data-toggle="modal" data-target="#modalCalltx"
                             (click)="callTransactionClicked()">Call Contract
                         </button>
-                        <button type="button" class="btn btn-purple btn-block" data-toggle="modal" data-target="#modalCreatetx"
+                        <button type="button" class="btn btn-xels-green btn-block" data-toggle="modal" data-target="#modalCreatetx"
                             (click)="createNewTransactionClicked()">Create Contract
                         </button>
                     </div>
@@ -59,6 +59,8 @@
                                 <th scope="col">Hash</th>
                                 <th scope="col">Address</th>
                                 <th scope="col">Amount</th>
+                                <th scope="col">Transaction Fee</th>
+                                <th scope="col">Gas Fee</th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
@@ -68,14 +70,20 @@
                                 <th scope="row"><strong>#{{item.blockHeight}}</strong></th>
                                 <td><span class="badge badge-info">{{item.type | contractType}}</span></td>
                                 <td>
-                                    <span *ngIf="item.type != 3 && item.type != 4">{{item.hash}}</span>
-                                    <a href="javascript:void(0);" *ngIf="item.type == 3 || item.type == 4" (click)="txHashClicked(item)">{{item.hash}}</a>
+                                    <ng-container *ngIf="item.blockHeight && (item.type == 3 || item.type == 4); then clickableTxHash; else txHash">
+                                    </ng-container>
+                                    <ng-template #clickableTxHash>
+                                        <a href="javascript:void(0);" (click)="txHashClicked(item)">{{item.hash}}</a>
+                                    </ng-template>
+                                    <ng-template #txHash>
+                                        {{ item.hash }}
+                                    </ng-template>
                                 </td>
                                 <td><code class="d-inline-block">{{item.to}}</code></td>
                                 <td><sc-balance [balance]="item.amount" [coinUnit]="coinUnit"></sc-balance></td>
-                                <td><button data-toggle="modal" data-target="#modalInfotx" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="See details" class="btn btn-primary btn-sm"
-                                        type="button">+</button></td>
+                                <td><sc-balance [balance]="item.transactionFee" [coinUnit]="coinUnit"></sc-balance></td>
+                                <td><sc-balance [balance]="item.gasFee" [coinUnit]="coinUnit"></sc-balance></td>
+                                <td>&nbsp;</td>
                             </tr>
 
                         </tbody>

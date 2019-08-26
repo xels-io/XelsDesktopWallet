@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { GlobalService } from '../shared/services/global.service';
-import { ApiService } from '../shared/services/api.service';
-import { ModalService } from '../shared/services/modal.service';
+import { GlobalService } from '@shared/services/global.service';
+import { ApiService } from '@shared/services/api.service';
+import { ModalService } from '@shared/services/modal.service';
 
-import { WalletLoad } from '../shared/models/wallet-load';
+import { WalletLoad } from '@shared/models/wallet-load';
 
 @Component({
   selector: 'app-login',
@@ -15,11 +15,11 @@ import { WalletLoad } from '../shared/models/wallet-load';
 })
 
 export class LoginComponent implements OnInit {
-  // tslint:disable-next-line:max-line-length
   constructor(private globalService: GlobalService, private apiService: ApiService, private genericModalService: ModalService, private router: Router, private fb: FormBuilder) {
     this.buildDecryptForm();
   }
 
+  public sidechainEnabled: boolean;
   public hasWallet: boolean = false;
   public isDecrypting = false;
   private openWalletForm: FormGroup;
@@ -28,12 +28,13 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.getWalletFiles();
     this.getCurrentNetwork();
+    this.sidechainEnabled = this.globalService.getSidechainEnabled();
   }
 
   private buildDecryptForm(): void {
     this.openWalletForm = this.fb.group({
-      'selectWallet': [{value: '', disabled: this.isDecrypting}, Validators.required],
-      'password': [{value: '', disabled: this.isDecrypting}, Validators.required]
+      "selectWallet": [{value: "", disabled: this.isDecrypting}, Validators.required],
+      "password": [{value: "", disabled: this.isDecrypting}, Validators.required]
     });
 
     this.openWalletForm.valueChanges
@@ -45,13 +46,11 @@ export class LoginComponent implements OnInit {
   onValueChanged(data?: any) {
     if (!this.openWalletForm) { return; }
     const form = this.openWalletForm;
-    // tslint:disable-next-line:forin
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        // tslint:disable-next-line:forin
         for (const key in control.errors) {
           this.formErrors[field] += messages[key] + ' ';
         }
@@ -59,7 +58,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // tslint:disable-next-line:member-ordering
   formErrors = {
     'password': ''
   };
@@ -78,8 +76,7 @@ export class LoginComponent implements OnInit {
           this.globalService.setWalletPath(response.walletsPath);
           if (this.wallets.length > 0) {
             this.hasWallet = true;
-            // tslint:disable-next-line:forin
-            for (const wallet in this.wallets) {
+            for (let wallet in this.wallets) {
               this.wallets[wallet] = this.wallets[wallet].slice(0, -12);
             }
           } else {
@@ -102,10 +99,10 @@ export class LoginComponent implements OnInit {
 
   public onDecryptClicked() {
     this.isDecrypting = true;
-    this.globalService.setWalletName(this.openWalletForm.get('selectWallet').value);
-    const walletLoad = new WalletLoad(
-      this.openWalletForm.get('selectWallet').value,
-      this.openWalletForm.get('password').value
+    this.globalService.setWalletName(this.openWalletForm.get("selectWallet").value);
+    let walletLoad = new WalletLoad(
+      this.openWalletForm.get("selectWallet").value,
+      this.openWalletForm.get("password").value
     );
     this.loadWallet(walletLoad);
   }

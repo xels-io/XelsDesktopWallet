@@ -11,7 +11,7 @@ export class PasswordValidationDirective {
     let password = AC.get('walletPassword').value;
     let confirmPassword = AC.get('walletPasswordConfirmation').value;
 
-    if (confirmPassword !== password) {
+    if(confirmPassword !== password) {
       AC.get('walletPasswordConfirmation').setErrors({ walletPasswordConfirmation: true });
     } else {
       AC.get('walletPasswordConfirmation').setErrors(null);

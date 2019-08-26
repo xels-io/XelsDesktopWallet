@@ -49,19 +49,18 @@
 
 // Actual modal
 .modal-content {
-  background-color: #53b947 !important;
-  border: 1px solid #53b947;
-  box-shadow: 5px 5px 5px 5px #ffffff;
-  // padding: .75rem;
-  // margin: 1.2rem;
+  background-color: $modal-content-bg;
+  border: 1px solid #158BCF;
+  box-shadow: 0 5px 20px #BDDDF2;
+  padding: .75rem;
+  margin: 1.2rem;
   position: relative;
   display: flex;
-  color: white !important;
   flex-direction: column;
   // counteract the pointer-events: none; in the .modal-dialog
   pointer-events: auto;
   background-clip: padding-box;
- // @include box-shadow($modal-content-box-shadow-xs);
+  @include box-shadow($modal-content-box-shadow-xs);
   // Remove focus outline from opened modal
   outline: 0;
 }
@@ -74,7 +73,7 @@
   bottom: 0;
   left: 0;
   z-index: $zindex-modal-backdrop;
-  // background-color: $modal-backdrop-bg;
+  background-color: $modal-backdrop-bg;
 
   // Fade for backdrop
   &.fade { opacity: 0; }

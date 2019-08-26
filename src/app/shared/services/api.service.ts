@@ -17,6 +17,7 @@ import { FeeEstimation } from '../models/fee-estimation';
 import { TransactionBuilding } from '../models/transaction-building';
 import { TransactionSending } from '../models/transaction-sending';
 import { NodeStatus } from '../models/node-status';
+import { WalletRescan } from '../models/wallet-rescan';
 
 @Injectable({
   providedIn: 'root'
@@ -26,13 +27,15 @@ export class ApiService {
     this.setApiUrl();
   };
 
-  private pollingInterval = interval(3000);
+  private pollingInterval = interval(5000);
   private apiPort;
   private xelsApiUrl;
+  private daemonIP;
 
   setApiUrl() {
     this.apiPort = this.globalService.getApiPort();
-    this.xelsApiUrl = 'http://localhost:' + this.apiPort + '/api';
+    this.daemonIP = this.globalService.getDaemonIP();
+    this.xelsApiUrl = 'http://' + this.daemonIP + ':' + this.apiPort + '/api';
   }
 
   getNodeStatus(silent?: boolean): Observable<NodeStatus> {
@@ -41,11 +44,11 @@ export class ApiService {
     );
   }
 
-  getNodeStatusInterval(): Observable<NodeStatus> {
+  getNodeStatusInterval(silent?: boolean): Observable<NodeStatus> {
     return this.pollingInterval.pipe(
       startWith(0),
       switchMap(() => this.http.get<NodeStatus>(this.xelsApiUrl + '/node/status')),
-      catchError(err => this.handleHttpError(err))
+      catchError(err => this.handleHttpError(err, silent))
     )
   }
 
@@ -240,19 +243,22 @@ export class ApiService {
     );
   }
 
-  /**
+    /**
    * Estimate the fee of a transaction
    */
   estimateFee(data: FeeEstimation): Observable<any> {
-    // let params = data;
-    let params = new HttpParams()
-      .set('walletName', data.walletName)
-      .set('accountName', data.accountName)
-      .set('recipients[0].destinationAddress', data.recipients[0].destinationAddress)
-      .set('recipients[0].amount', data.recipients[0].amount)
-      .set('feeType', data.feeType)
-      .set('allowUnconfirmed', "true");
-    return this.http.get(this.xelsApiUrl + '/wallet/estimate-txfee', { params }).pipe(
+    return this.http.post(this.xelsApiUrl + '/wallet/estimate-txfee', {
+      'walletName': data.walletName,
+      'accountName': data.accountName,
+      'recipients': [
+        {
+          'destinationAddress': data.recipients[0].destinationAddress,
+          'amount': data.recipients[0].amount
+        }
+      ],
+      'feeType': data.feeType,
+      'allowUnconfirmed': true
+     }).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }
@@ -261,15 +267,18 @@ export class ApiService {
    * Estimate the fee of a sidechain transaction
    */
   estimateSidechainFee(data: SidechainFeeEstimation): Observable<any> {
-    // let params = data;
-    let params = new HttpParams()
-      .set('walletName', data.walletName)
-      .set('accountName', data.accountName)
-      .set('recipients[0].destinationAddress', data.recipients[0].destinationAddress)
-      .set('recipients[0].amount', data.recipients[0].amount)
-      .set('feeType', data.feeType)
-      .set('allowUnconfirmed', "true");
-    return this.http.get(this.xelsApiUrl + '/wallet/estimate-txfee', { params }).pipe(
+    return this.http.post(this.xelsApiUrl + '/wallet/estimate-txfee', {
+      'walletName': data.walletName,
+      'accountName': data.accountName,
+      'recipients': [
+        {
+          'destinationAddress': data.recipients[0].destinationAddress,
+          'amount': data.recipients[0].amount
+        }
+      ],
+      'feeType': data.feeType,
+      'allowUnconfirmed': true
+     }).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }
@@ -299,6 +308,17 @@ export class ApiService {
       .set('all', 'true')
       .set('resync', 'true');
     return this.http.delete(this.xelsApiUrl + '/wallet/remove-transactions', { params }).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
+  }
+
+  /** Rescan wallet from a certain date using remove-transactions */
+  rescanWallet(data: WalletRescan): Observable<any> {
+    let params = new HttpParams()
+      .set('walletName', data.name)
+      .set('fromDate', data.fromDate.toDateString())
+      .set('reSync', 'true');
+    return this.http.delete(this.xelsApiUrl + '/wallet/remove-transactions/', { params }).pipe(
       catchError(err => this.handleHttpError(err))
     );
   }

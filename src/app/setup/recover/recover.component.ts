@@ -3,11 +3,11 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
-import { GlobalService } from '../../shared/services/global.service';
-import { ApiService } from '../../shared/services/api.service';
-import { ModalService } from '../../shared/services/modal.service';
+import { GlobalService } from '@shared/services/global.service';
+import { ApiService } from '@shared/services/api.service';
+import { ModalService } from '@shared/services/modal.service';
 
-import { WalletRecovery } from '../../shared/models/wallet-recovery';
+import { WalletRecovery } from '@shared/models/wallet-recovery';
 
 @Component({
   selector: 'app-recover',
@@ -26,10 +26,12 @@ export class RecoverComponent implements OnInit {
   public minDate = new Date("2009-08-09");
   public maxDate = new Date();
   public bsConfig: Partial<BsDatepickerConfig>;
+  public sidechainEnabled: boolean;
   private walletRecovery: WalletRecovery;
 
   ngOnInit() {
-    this.bsConfig = Object.assign({}, {showWeekNumbers: false, containerClass: 'theme-blue'});
+    this.sidechainEnabled = this.globalService.getSidechainEnabled();
+    this.bsConfig = Object.assign({}, {showWeekNumbers: false, containerClass: 'theme-dark-blue'});
   }
 
   private buildRecoverForm(): void {
@@ -44,7 +46,11 @@ export class RecoverComponent implements OnInit {
       "walletMnemonic": ["", Validators.required],
       "walletDate": ["", Validators.required],
       "walletPassphrase": [""],
-      "walletPassword": ["", Validators.required],
+      "walletPassword": ["", Validators.compose([
+        Validators.required,
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        Validators.minLength(8)
+    ])],
       "selectNetwork": ["test", Validators.required]
     });
 
@@ -92,7 +98,9 @@ export class RecoverComponent implements OnInit {
       'required': 'Please choose the date the wallet should sync from.'
     },
     'walletPassword': {
-      'required': 'A password is required.'
+      'required': 'A password is required.',
+      'pattern': 'A password must contain at least one uppercase letter, one lowercase letter, one number and one special character.',
+      'minlength': 'A password must be at least 8 characters long.',
     },
 
   };

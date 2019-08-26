@@ -21,14 +21,14 @@
     "!tslint.json"
   ],
   "win": {
-    "icon": "dist/assets/images/icon",
+    "icon": "dist/assets/images/xels/icon",
     "target": [
       "nsis"
     ],
     "artifactName": "${productName}-v${version}-setup-${os}-${arch}.${ext}"
   },
   "linux": {
-    "icon": "dist/assets/images/",
+    "icon": "dist/assets/images/xels/",
     "target": [
       "deb",
       "tar.gz"
@@ -38,7 +38,7 @@
     "artifactName": "${productName}-v${version}-${os}-${arch}.${ext}"
   },
   "mac": {
-    "icon": "dist/assets/images/icon.icns",
+    "icon": "dist/assets/images/xels/icon.icns",
     "target": [
       "dmg"
     ],
@@ -46,9 +46,9 @@
     "artifactName": "${productName}-v${version}-${os}-${arch}.${ext}"
   },
   "nsis": {
-    "oneClick": false,
+    "oneClick": true,
     "perMachine": true,
-    "allowToChangeInstallationDirectory": true,
+    "allowToChangeInstallationDirectory": false,
     "deleteAppDataOnUninstall": true,
     "guid": "ef77eb40-01cf-4516-9da6-f3c6ba6854aa",
     "createDesktopShortcut": true,
@@ -60,7 +60,7 @@
   },
   "extraResources": [
     "daemon/**/*",
-    "src/assets/images/icon-tray.png",
+    "src/assets/images/xels/icon-16.png",
     "src/assets/images/license_en.txt"
   ]
 }

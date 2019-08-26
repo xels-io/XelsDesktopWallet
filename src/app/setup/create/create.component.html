@@ -1,12 +1,16 @@
 <section id="GUI" class="container-fluid">
-    <!-- <app-header></app-header> -->
+
   <div class="row">
+    <!-- <div class="col-4 left-login d-flex align-items-center" [class.left-login-green]="sidechainEnabled">
+      <img *ngIf="!sidechainEnabled" src="./assets/images/xels/home-xels-logo.svg" width="160px" height="auto">
+      <img *ngIf="sidechainEnabled" src="./assets/images/cirrus/home-cirrus-logo.svg" width="160px" height="auto">
+    </div> -->
     <!-- /col -->
     <div class="col-12 right-login d-flex align-content-center flex-wrap createWallet">
         <div class="col-12">
-            <app-header></app-header>
-          </div>
-      <form class="col-5 mx-auto d-flex align-content-center flex-wrap" [formGroup]="createWalletForm">
+          <app-header></app-header>
+        </div>
+      <form class="col-6 mx-auto d-flex align-content-center flex-wrap" [formGroup]="createWalletForm">
         <div class="col-12 text-center">
           <h3 class="display-4 mb-4">Create a wallet</h3>
         </div>
@@ -23,14 +27,14 @@
         </div>
         <!-- /form-group -->
         <div class="form-group col-12">
-          <label for="walletPasswordConfirmation">Confirm Password</label>
+          <label for="walletPasswordConfirmation">Confirm password</label>
           <input type="password" class="form-control" [class.is-invalid]="formErrors.walletPasswordConfirmation" [class.is-valid]="!formErrors.walletPasswordConfirmation && createWalletForm.get('walletPassword').valid && createWalletForm.get('walletPasswordConfirmation').valid" formControlName="walletPasswordConfirmation" id="walletPasswordConfirmation" placeholder="Re-enter the password to encrypt your wallet file.">
           <div *ngIf="formErrors.walletPasswordConfirmation" class="invalid-feedback">{{ formErrors.walletPasswordConfirmation }}</div>
         </div>
         <!-- /form-group -->
         <div class="form-group col-12">
           <label for="walletPassphrase mr-auto">Passphrase</label><em class="text-muted ml-auto float-right">(optional)</em>
-
+          <!--[class.is-invalid]="formErrors.walletPassphrase" [class.is-valid]="!formErrors.walletPassphrase && createWalletForm.get('walletPassphrase').valid"-->
           <input type="password" class="form-control form-control-success" formControlName="walletPassphrase" id="walletPassphrase" placeholder="Enter an optional passphrase." placement="right" ngbTooltip="The passphrase will be combined with your secret words to generate the private seed and will be required to restore your wallet in the future if necessary." triggers="click:blur">
           <div *ngIf="formErrors.walletPassphrase" class="invalid-feedback">{{ formErrors.walletPassphrase }}</div>
         </div>
@@ -41,7 +45,7 @@
         </div>
         <div class="modal-footer col-12">
           <button type="button" class="btn btn-outline-light" (click)="onBackClicked()">Cancel</button>
-          <button type="button" class="btn btn-primary btn-block" [disabled]="!createWalletForm.valid" (click)="onContinueClicked()">Create a new wallet</button>
+          <button type="button" class="btn btn-primary btn-block" [class.btn-xels-green]="sidechainEnabled" [disabled]="!createWalletForm.valid" (click)="onContinueClicked()">Create a new wallet</button>
         </div>
       </form>
       <!-- /form -->

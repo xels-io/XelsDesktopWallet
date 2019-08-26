@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { GlobalService } from '../../shared/services/global.service';
-import { ApiService } from '../../shared/services/api.service';
-import { ModalService } from '../../shared/services/modal.service';
+import { GlobalService } from '@shared/services/global.service';
+import { ApiService } from '@shared/services/api.service';
+import { ModalService } from '@shared/services/modal.service';
 
-import { PasswordValidationDirective } from '../../shared/directives/password-validation.directive';
+import { PasswordValidationDirective } from '@shared/directives/password-validation.directive';
 
-import { WalletCreation } from '../../shared/models/wallet-creation';
+import { WalletCreation } from '@shared/models/wallet-creation';
 
 @Component({
   selector: 'create-component',
@@ -22,11 +22,13 @@ export class CreateComponent implements OnInit {
   }
 
   public createWalletForm: FormGroup;
+  public sidechainEnabled: boolean;
   private newWallet: WalletCreation;
   private mnemonic: string;
 
   ngOnInit() {
     this.getNewMnemonic();
+    this.sidechainEnabled = this.globalService.getSidechainEnabled();
   }
 
   private buildCreateForm(): void {
@@ -41,11 +43,12 @@ export class CreateComponent implements OnInit {
       ],
       "walletPassphrase" : [""],
       "walletPassword": ["",
+      Validators.compose([
         Validators.required,
-        // Validators.compose([
-        //   Validators.required,
-        //   Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/)])
-        ],
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        Validators.minLength(8)
+        ])
+      ],
       "walletPasswordConfirmation": ["", Validators.required],
       "selectNetwork": ["test", Validators.required]
     }, {
@@ -61,13 +64,11 @@ export class CreateComponent implements OnInit {
   onValueChanged(data?: any) {
     if (!this.createWalletForm) { return; }
     const form = this.createWalletForm;
-    // tslint:disable-next-line:forin
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        // tslint:disable-next-line:forin
         for (const key in control.errors) {
           this.formErrors[field] += messages[key] + ' ';
         }
@@ -91,7 +92,8 @@ export class CreateComponent implements OnInit {
     },
     'walletPassword': {
       'required': 'A password is required.',
-      'pattern': 'A password must be at least 10 characters long and contain one lowercase and uppercase alphabetical character and a number.'
+      'pattern': 'A password must contain at least one uppercase letter, one lowercase letter, one number and one special character.',
+      'minlength': 'A password must be at least 8 characters long.',
     },
     'walletPasswordConfirmation': {
       'required': 'Confirm your password.',

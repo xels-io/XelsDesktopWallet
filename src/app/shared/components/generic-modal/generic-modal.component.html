@@ -1,19 +1,13 @@
 <!-- MODAL GENERIC -->
-<div class="model-content">
-  <div class= "row" style="padding: .75rem;margin: 1.1rem;">
-      <div class="modal-header">
-          <h5 class="modal-title">{{ title }}</h5>
-      </div>
-      <div class="modal-body">
-        <div [innerHTML]="body">
-        </div>
-      </div>
-        <!-- /modal-body -->
-
-  </div>
-  <div class="modal-footer">
-      <button type="button" class="btn btn-lg btn-primary btn-block" (click)="activeModal.close('Close click')">OK</button>
-    </div>
+<div class="modal-header">
+  <h5 class="modal-title">{{ title }}</h5>
 </div>
-
+<div class="modal-body">
+    <div [innerHTML]="body">
+</div>
+</div>
+<!-- /modal-body -->
+<div class="modal-footer">
+<button type="button" class="btn btn-lg btn-primary btn-block" (click)="activeModal.close('Close click')">OK</button>
+</div>
 <!-- /MODAL GENERIC -->
