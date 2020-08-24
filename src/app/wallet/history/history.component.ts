@@ -83,7 +83,9 @@ export class HistoryComponent {
       } else if (transaction.type === "received") {
         transactionType = "received";
       } else if (transaction.type === "staked") {
-        transactionType = "rewarded";
+        transactionType = "hybrid reward";
+      } else if (transaction.type === "mined") {
+        transactionType = "pow reward"
       }
       let transactionId = transaction.id;
       let transactionAmount = transaction.amount;

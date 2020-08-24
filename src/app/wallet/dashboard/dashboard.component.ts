@@ -46,7 +46,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public dateTime: string;
   public isStarting: boolean;
   public isStopping: boolean;
-  public hasBalance: boolean = false;
+  public hasBalance = false;
+  public powMiningStarted = false;
 
   private generalWalletInfoSubscription: Subscription;
   public lastBlockSyncedHeight: number;
@@ -159,7 +160,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else if (transaction.type === "received") {
         transactionType = "received";
       } else if (transaction.type === "staked") {
-        transactionType = "rewarded";
+        transactionType = "hybrid reward";
+      } else if (transaction.type === "mined") {
+        transactionType = "pow reward"
       }
       let transactionId = transaction.id;
       let transactionAmount = transaction.amount;
@@ -176,6 +179,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  public startPowMining() {
+    const walletData = {
+      WalletName: this.globalService.getWalletName(),
+    };
+    this.apiService.startPowMining(walletData)
+    .subscribe(
+      response =>  {
+        this.powMiningStarted = true;
+      },
+      error => {
+      }
+    )
+  ;
+  }
+  public stopPowMining() {
+    this.apiService.stopPowMining()
+    .subscribe(
+      response =>  {
+        this.powMiningStarted = false;
+      },
+      error => {
+      }
+    )
+  ;
+  }
   private startStaking() {
     this.isStarting = true;
     this.isStopping = false;

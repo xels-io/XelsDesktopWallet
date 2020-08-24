@@ -18,7 +18,8 @@
                     <td class="text-uppercase text-left">{{ transaction.transactionType }}</td>
                     <td class="text-left" *ngIf="transaction.transactionType == 'sent'"><strong>- {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
                     <td class="text-left" *ngIf="transaction.transactionType == 'received'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
-                    <td class="text-left" *ngIf="transaction.transactionType == 'rewarded'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                    <td class="text-left" *ngIf="transaction.transactionType == 'pow reward'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                    <td class="text-left" *ngIf="transaction.transactionType == 'hybrid reward'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
                     <td class="text-left">{{ transaction.transactionTimestamp * 1000 | date:'medium' }}</td>
                     <td class="text-center"><a class="link" (click)="openTransactionDetailDialog(transaction)">details</a></td>
                   </tr>

@@ -4,9 +4,9 @@
         <div class="row">
             <section class="col-3" *ngIf="hasBalance && !sidechainEnabled">
                 <div class="card" *ngIf="!stakingEnabled">
-                  <div class="card-header">Staking Info</div>
+                  <div class="card-header">Hybrid-PoW-PoS Mining Info</div>
                   <div class="card-body">
-                    <div class="alert alert-info text-center" role="alert">Unlock your wallet to start staking</div>
+                    <div class="alert alert-info text-center" role="alert">Unlock your wallet to start hybrid mining</div>
                     <form class="form-inline mb-3" [formGroup]="stakingForm">
                       <div class="form-group">
                         <label for="inputPassword" class="sr-only">Password</label>
@@ -18,38 +18,39 @@
                 </div>
                 <div id="staking" class="card" *ngIf="stakingEnabled">
                   <div class="card-header">
-                    <span class="d-inline-block col-12 row">Staking Info</span>
+                    <span class="d-inline-block col-12 row">Hybrid-PoW-PoS Mining Info</span>
                   </div>
                   <div class="card-body">
                     <ul class="list-unstyled mb-3">
-                      <li *ngIf="isStarting">Waiting for staking to start...</li>
+                      <li *ngIf="isStarting">Waiting for hybrid mining to start...</li>
                       <div *ngIf="!isStarting">
-                        <li>Staking weight: <strong>{{ stakingWeight | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
+                        <li>Hybrid weight: <strong>{{ stakingWeight | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
                         <li>Coins awaiting maturity: <strong>{{ awaitingMaturity | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
                         <li>Network weight: <strong>{{ netStakingWeight | coinNotation | number: '1.0-0' }} {{ coinUnit }}</strong></li>
                         <li class="mt-2">Expected reward time is:</li>
                         <li><strong>{{ dateTime }}</strong></li>
+                        <div class="alert alert-info text-center" role="alert">The info above are probabilistic approximation. They may not be truely correct.</div>
                       </div>
                     </ul>
-                    <button type="button" class="btn btn-outline-light mb-3" [disabled]="isStopping" (click)="stopStaking()">Stop Staking</button>
+                    <button type="button" class="btn btn-outline-light mb-3" [disabled]="isStopping" (click)="stopStaking()">Stop Hybrid Mining</button>
                   </div>
                 </div>
               </section>
           <div class="col-6">
-            <div class="row d-flex align-items-center">
-              <div class="col-12 text-center">
-                <h5>Available Balance</h5>
-                <p class="lead">
-                  <strong>{{ (confirmedBalance | coinNotation) || (0 | coinNotation) }}</strong>
-                  <small class="text-uppercase"> {{ coinUnit }}</small>
-                </p>
-                <ul class="list-unstyled">
-                  <!-- <li><strong>{{ (awaitingMaturity | coinNotation) || (0 | coinNotation) }}</strong><em> (staking)</em></li> -->
-                  <li><strong>{{ (unconfirmedBalance | coinNotation) || (0 | coinNotation) }}</strong><em> (unconfirmed)</em></li>
-                  <!-- <li><strong>805.65900153</strong> <em>(staking)</em></li> -->
-                </ul>
-              </div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 text-center">
+              <h5>Available Balance</h5>
+              <p class="lead">
+                <strong>{{ (confirmedBalance | coinNotation) || (0 | coinNotation) }}</strong>
+                <small class="text-uppercase"> {{ coinUnit }}</small>
+              </p>
+              <ul class="list-unstyled">
+                <!-- <li><strong>{{ (awaitingMaturity | coinNotation) || (0 | coinNotation) }}</strong><em> (staking)</em></li> -->
+                <li><strong>{{ (unconfirmedBalance | coinNotation) || (0 | coinNotation) }}</strong><em> (unconfirmed)</em></li>
+                <!-- <li><strong>805.65900153</strong> <em>(staking)</em></li> -->
+              </ul>
             </div>
+          </div>
             <div class="row d-flex align-items-center">
               <div class="col-12 text-center">
                 <p>
@@ -102,6 +103,12 @@
                       </div>
                     </div>
                     </ul>
+                    <div *ngIf="!powMiningStarted">
+                      <button type="button" class="btn btn-outline-primary ml-2" (click)="startPowMining()">Start PoW Mining</button>
+                    </div>
+                    <div *ngIf="powMiningStarted">
+                      <button type="button" class="btn btn-outline-light mb-3" (click)="stopPowMining()">Stop PoW Mining</button>
+                    </div>
                   </div>
                 </div>
           </section>
@@ -111,10 +118,10 @@
           <div class="row d-flex align-items-center">
             <ng-template #noTransactions>
                 <section class="col-12 text-center my-4">
-                  <img src="./assets/images/notransactions.svg" alt="Click the down arrow for a receive address.">
+                  <img src="./assets/images/notransactions.svg" alt="Click the Receive button for a receive address.">
                 </section>
                 <div class="col-12 text-center">
-                  <p>Click the down arrow for a receive address.</p>
+                  <p>Click the Receive button for a receive address.</p>
                 </div>
             </ng-template>
           </div>
@@ -132,7 +139,8 @@
                         <td class="text-uppercase text-left">{{ transaction.transactionType }}</td>
                         <td class="text-left" *ngIf="transaction.transactionType == 'sent'"><strong>- {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
                         <td class="text-left" *ngIf="transaction.transactionType == 'received'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
-                        <td class="text-left" *ngIf="transaction.transactionType == 'rewarded'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                        <td class="text-left" *ngIf="transaction.transactionType == 'pow reward'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
+                        <td class="text-left" *ngIf="transaction.transactionType == 'hybrid reward'"><strong>+ {{ transaction.transactionAmount + transaction.transactionFee | coinNotation }} {{ coinUnit }}</strong></td>
                         <td class="text-left">{{ transaction.transactionTimestamp * 1000 | date:'medium' }}</td>
                         <td class="text-center"><a class="link" (click)="openTransactionDetailDialog(transaction)">details</a></td>
                       </tr>

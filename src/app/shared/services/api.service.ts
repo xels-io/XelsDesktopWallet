@@ -247,20 +247,33 @@ export class ApiService {
    * Estimate the fee of a transaction
    */
   estimateFee(data: FeeEstimation): Observable<any> {
-    return this.http.post(this.xelsApiUrl + '/wallet/estimate-txfee', {
-      'walletName': data.walletName,
-      'accountName': data.accountName,
-      'recipients': [
-        {
-          'destinationAddress': data.recipients[0].destinationAddress,
-          'amount': data.recipients[0].amount
-        }
-      ],
-      'feeType': data.feeType,
-      'allowUnconfirmed': true
-     }).pipe(
+    let params = new HttpParams()
+      .set('walletName', data.walletName)
+      .set('accountName', data.accountName)
+      .set('recipients[0].destinationAddress', data.recipients[0].destinationAddress)
+      .set('recipients[0].amount', data.recipients[0].amount)
+      .set('opReturnData', null)
+      .set('opReturnAmount', data.recipients[0].amount)
+      .set('feeType', data.feeType)
+      .set('allowUnconfirmed', "true");
+    return this.http.get(this.xelsApiUrl + '/wallet/estimate-txfee', { params }).pipe(
       catchError(err => this.handleHttpError(err))
     );
+
+    // return this.http.post(this.xelsApiUrl + '/wallet/estimate-txfee', {
+    //   'walletName': data.walletName,
+    //   'accountName': data.accountName,
+    //   'recipients': [
+    //     {
+    //       'destinationAddress': data.recipients[0].destinationAddress,
+    //       'amount': data.recipients[0].amount
+    //     }
+    //   ],
+    //   'feeType': data.feeType,
+    //   'allowUnconfirmed': true
+    //  }).pipe(
+    //   catchError(err => this.handleHttpError(err))
+    // );
   }
 
   /**
@@ -323,6 +336,17 @@ export class ApiService {
     );
   }
 
+
+  startPowMining(data: any): Observable<any> {
+    return this.http.post(this.xelsApiUrl + '/mining/startmining', JSON.stringify(data)).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
+  }
+  stopPowMining(): Observable<any> {
+    return this.http.post(this.xelsApiUrl + '/mining/stopmining', null).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
+  }
   /**
    * Start staking
    */
