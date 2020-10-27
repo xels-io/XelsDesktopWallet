@@ -14,6 +14,10 @@ import { TransactionDetailsComponent } from '../transaction-details/transaction-
 
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { TokenService } from '@shared/services/token.service';
+import { token_config } from '../../config/token';
+import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
+import { EthImportComponent } from '../eth-import/eth-import.component';
 
 @Component({
   selector: 'dashboard-component',
@@ -22,7 +26,15 @@ import { Router } from '@angular/router';
 })
 
 export class DashboardComponent implements OnInit, OnDestroy {
-  constructor(private apiService: ApiService, private globalService: GlobalService, private modalService: NgbModal, private genericModalService: ModalService, private router: Router, private fb: FormBuilder) {
+  constructor(
+    private apiService: ApiService, 
+    private globalService: GlobalService, 
+    private modalService: NgbModal, 
+    private genericModalService: ModalService, 
+    private router: Router, 
+    private fb: FormBuilder,
+    private Token:TokenService
+    ) {
     this.buildStakingForm();
   }
 
@@ -59,11 +71,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
   blockChainStatus = '';
   connectedNodesStatus = '';
 
-  ngOnInit() {
+  sels:any = 0;
+  bels:any = 0;
+  SelsToken = Object.create(this.Token);
+  BelsToken = Object.create(this.Token);
+  importBels = true;
+  importSels = true;
+
+  async ngOnInit() {
     this.sidechainEnabled = this.globalService.getSidechainEnabled();
     this.walletName = this.globalService.getWalletName();
     this.coinUnit = this.globalService.getCoinUnit();
     this.startSubscriptions();
+    this.SelsToken.initialize(token_config['SELS'].contract,token_config['SELS'].abi,'mainnet')
+    this.BelsToken.initialize(token_config['BELS'].contract,token_config['BELS'].abi,'mainnet')
+    let belsWallet = this.Token.getLocalWallet(this.walletName,'BELS')
+    let selsWallet = this.Token.getLocalWallet(this.walletName,'SELS')
+    console.log(belsWallet,selsWallet);
+    
+    if(belsWallet){
+      this.importBels = false;
+      this.bels = await this.BelsToken.getBalance(belsWallet.address)
+    }
+    if(selsWallet){
+      this.importSels = false;
+      this.sels = await this.BelsToken.getBalance(selsWallet.address)
+    }
+    
   };
 
   ngOnDestroy() {
@@ -86,6 +120,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public openReceiveDialog() {
     const modalRef = this.modalService.open(ReceiveComponent, { backdrop: "static", keyboard: false });
+  };
+
+  public openEthImportDialog() {
+    const modalRef = this.modalService.open(EthImportComponent, { backdrop: "static", keyboard: false });
   };
 
   public openTransactionDetailDialog(transaction: TransactionInfo) {

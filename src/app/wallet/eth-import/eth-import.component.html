@@ -1,0 +1,61 @@
+<!-- MODAL RECEIVE -->
+<div class="modal-header">
+  <h5 class="modal-title">Import Address</h5>
+  <!-- button close -->
+  <button type="button" class="close closemodal ml-auto" (click)="activeModal.close('Close click')">
+      <i class="lnr lnr-cross-circle"></i>
+  </button>
+  <!-- /button close -->
+</div>
+
+<!-- MODAL RECEIVE -->
+<div class="modal-body">
+  <form [formGroup]="importForm" (ngSubmit)="importNow()">
+    <div class="row form-wrapper">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="from">From</label>
+                <select class="form-control" name="from" required="required" formControlName="from" (change)="updateBy()">
+                  <option value="mnemonic">Xels Mnemonic</option>
+                  <option value="pk">Private key</option>
+                </select>
+                <div *ngIf="this.importForm.controls['from'].invalid && this.importForm.controls['from'].touched">
+                    <small class="text-danger"><i>From is required.</i></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" *ngIf="by_mnemonic">
+            <div class="form-group">
+                <label for="deposit">Mnemonic</label>
+                <textarea type="text" class="form-control" placeholder="Xels Wallet Mnemonic *" name="mnemonic" required="required" formControlName="mnemonic"></textarea>
+                <div *ngIf="this.importForm.controls['mnemonic'].invalid && this.importForm.controls['mnemonic'].touched">
+                    <small class="text-danger"><i>Deposit Amount is required.</i></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" *ngIf="!by_mnemonic">
+            <div class="form-group">
+                <label for="sels_pk">SELS Private Key</label>
+                <input type="text" class="form-control" placeholder="Your SELS pk *" value="" name="sels_pk" required="required" formControlName="sels_pk"/>
+                <div *ngIf="this.importForm.controls['sels_pk'].invalid && this.importForm.controls['sels_pk'].touched">
+                    <small class="text-danger"><i>SELS Address Private key is required.</i></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" *ngIf="!by_mnemonic">
+          <div class="form-group">
+              <label for="bels_pk">BELS Private Key</label>
+              <input type="text" class="form-control" placeholder="Your BELS pk *" value="" name="bels_pk" required="required" formControlName="bels_pk"/>
+              <div *ngIf="this.importForm.controls['bels_pk'].invalid && this.importForm.controls['bels_pk'].touched">
+                  <small class="text-danger"><i>BELS Address Private key is required.</i></small>
+              </div>
+          </div>
+      </div>
+    
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary btn-block">Import Now</button>
+        </div>
+    </div>
+  </form>
+</div>

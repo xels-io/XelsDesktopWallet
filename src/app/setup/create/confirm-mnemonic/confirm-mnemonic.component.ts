@@ -9,6 +9,8 @@ import { ModalService } from '@shared/services/modal.service';
 import { WalletCreation } from '@shared/models/wallet-creation';
 import { SecretWordIndexGenerator } from './secret-word-index-generator';
 import { GlobalService } from '@shared/services/global.service';
+import { TokenService } from '@shared/services/token.service';
+import { EncryptionService } from '@shared/services/encryption.service';
 
 @Component({
   selector: 'app-confirm-mnemonic',
@@ -19,7 +21,16 @@ export class ConfirmMnemonicComponent implements OnInit {
 
   public secretWordIndexGenerator = new SecretWordIndexGenerator();
 
-  constructor(private apiService: ApiService, private genericModalService: ModalService, private route: ActivatedRoute, private router: Router, private fb: FormBuilder, private globalService: GlobalService) {
+  constructor(
+      private apiService: ApiService, 
+      private genericModalService: ModalService,
+      private route: ActivatedRoute, 
+      private router: Router, 
+      private fb: FormBuilder, 
+      private globalService: GlobalService,
+      private Token: TokenService,
+      private encryption:EncryptionService
+    ) {
     this.buildMnemonicForm();
   }
   private newWallet: WalletCreation;
@@ -119,9 +130,13 @@ export class ConfirmMnemonicComponent implements OnInit {
     }
   };
 
-  public onConfirmClicked() {
+  public async onConfirmClicked() {
     this.checkMnemonic();
     if (this.checkMnemonic()) {
+      var wallet:any = await this.Token.createWalllet(this.newWallet.mnemonic);
+      wallet.privateKey = this.encryption.encrypt(wallet.privateKey);
+      this.Token.storeLocally(wallet,this.newWallet.name,'SELS');
+      this.Token.storeLocally(wallet,this.newWallet.name,'BELS');
       this.isCreating = true;
       this.createWallet(this.newWallet);
     }

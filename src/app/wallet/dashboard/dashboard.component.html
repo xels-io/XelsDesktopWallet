@@ -40,7 +40,7 @@
           <div class="row d-flex align-items-center">
             <div class="col-12 text-center">
               <h5>Available Balance</h5>
-              <p class="lead">
+              <p class="lead bg-success text-white mb-0">
                 <strong>{{ (confirmedBalance | coinNotation) || (0 | coinNotation) }}</strong>
                 <small class="text-uppercase"> {{ coinUnit }}</small>
               </p>
@@ -49,6 +49,21 @@
                 <li><strong>{{ (unconfirmedBalance | coinNotation) || (0 | coinNotation) }}</strong><em> (unconfirmed)</em></li>
                 <!-- <li><strong>805.65900153</strong> <em>(staking)</em></li> -->
               </ul>
+
+              <div id="tokens">
+                <div class="lead bg-success text-white mb-3" *ngIf="importBels==false">
+                  <strong>{{sels}}</strong>
+                  <small class="text-uppercase">SELS</small>
+                </div>
+                <div class="lead bg-success text-white mb-3" *ngIf="importBels==false">
+                  <strong>{{bels}}</strong>
+                  <small class="text-uppercase">BELS</small>
+                </div>
+
+                <div class="mb-3">
+                  <button type="button" class="btn btn-outline-primary" (click)="openEthImportDialog()" >Import XELS & BELS Address</button>
+                </div>
+              </div>
             </div>
           </div>
             <div class="row d-flex align-items-center">
