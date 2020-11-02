@@ -41,6 +41,14 @@ export class TokenService {
         });
       })
   }
+  createWalletFromPk(pk){
+      console.log('Pk',pk)
+    let web3js =  new web3();
+    let account = web3js.eth.accounts.privateKeyToAccount(pk);
+    let wallet = {address:account.address,privateKey:account.privateKey};
+    console.log(wallet);
+    return wallet; 
+  }
   storeLocally(wallet,user,token){
       let walletsString = localStorage.getItem('wallets');
       let wallets = {};
