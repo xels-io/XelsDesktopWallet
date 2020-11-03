@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { GlobalService } from '@shared/services/global.service';
 import { ModalService } from '@shared/services/modal.service';
 
@@ -38,28 +38,25 @@ export class EthImportComponent implements OnInit {
     ) {}
 
   ngOnInit() {
+    
   }
 
   async importNow(){
     let walletname = this.globalService.getWalletName();
-    let wallet:any;
     if(this.importForm.value.from != 'pk'){
-      wallet = await this.Token.createWalllet(this.importForm.value.mnemonic);
-    }else{
-      wallet = this.Token.createWalletFromPk(this.importForm.value.pk);
-    }
-    console.log('comp',wallet);
-
-    if(wallet.privateKey){
+      let wallet:any = await this.Token.createWalllet(this.importForm.value.mnemonic);
       wallet.privateKey = this.encryption.encrypt(wallet.privateKey);
       this.Token.storeLocally(wallet,walletname,'SELS');
       this.Token.storeLocally(wallet,walletname,'BELS');
-      console.log('account stored')
     }else{
-      console.log('Something went wrong!')
+      let sWallet = this.Token.createWalletFromPk(this.importForm.value.sels_pk);
+      sWallet.privateKey = this.encryption.encrypt(sWallet.privateKey);
+      let bWallet = this.Token.createWalletFromPk(this.importForm.value.bels_pk);
+      bWallet.privateKey = this.encryption.encrypt(bWallet.privateKey);
+      this.Token.storeLocally(sWallet,walletname,'SELS');
+      this.Token.storeLocally(bWallet,walletname,'BELS');
     }
-
-    
+    this.activeModal.close('importEth Done');
   }
   updateBy(){
     if(this.importForm.value.from=='pk'){
