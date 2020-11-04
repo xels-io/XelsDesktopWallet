@@ -52,6 +52,7 @@ export class SendComponent implements OnInit, OnDestroy {
   private responseMessage: any;
   private transaction: TransactionBuilding;
   private walletBalanceSubscription: Subscription;
+  public open = 'XELS';
 
   ngOnInit() {
     this.sidechainEnabled = this.globalService.getSidechainEnabled();
@@ -74,6 +75,10 @@ export class SendComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.cancelSubscriptions();
   };
+
+  public changeCoin(coin){
+    this.open = coin;
+  }
 
   private buildSendForm(): void {
     this.sendForm = this.fb.group({

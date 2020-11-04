@@ -7,6 +7,7 @@ import { ModalService } from '@shared/services/modal.service';
 import { WalletInfo } from '@shared/models/wallet-info';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TokenService } from '@shared/services/token.service';
 
 @Component({
   selector: 'receive-component',
@@ -15,8 +16,15 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class ReceiveComponent {
-  constructor(private apiService: ApiService, private globalService: GlobalService, public activeModal: NgbActiveModal, private genericModalService: ModalService) {}
-
+  constructor(
+    private apiService: ApiService, 
+    private globalService: GlobalService, 
+    public activeModal: NgbActiveModal, 
+    private genericModalService: ModalService,
+    private Token:TokenService
+    ) {}
+  
+  public userName = '';
   public address: any = "";
   public qrString: any;
   public copied: boolean = false;
@@ -30,10 +38,20 @@ export class ReceiveComponent {
   public pageNumberChange: number = 1;
   public sidechainEnabled: boolean;
   private errorMessage: string;
+  public open = 'XELS';
+  public sels_address = '';
+  public bels_address = '';
 
   ngOnInit() {
     this.sidechainEnabled = this.globalService.getSidechainEnabled();
     this.getUnusedReceiveAddresses();
+    this.userName = this.globalService.getWalletName();
+    this.sels_address = this.Token.getLocalWallet(this.userName,'SELS').address;
+    this.bels_address = this.Token.getLocalWallet(this.userName,'BELS').address;
+  }
+
+  public changeCoin(coin){
+    this.open = coin;
   }
 
   public onCopiedClick() {
