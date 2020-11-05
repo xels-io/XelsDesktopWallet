@@ -19,6 +19,8 @@ import { SendConfirmationComponent } from './send-confirmation/send-confirmation
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { TokenService } from '@shared/services/token.service';
+import { token_config } from '../../config/token';
 
 @Component({
   selector: 'send-component',
@@ -28,7 +30,15 @@ import { debounceTime } from 'rxjs/operators';
 
 export class SendComponent implements OnInit, OnDestroy {
   @Input() address: string;
-  constructor(private apiService: ApiService, private globalService: GlobalService, private modalService: NgbModal, private genericModalService: ModalService, public activeModal: NgbActiveModal, private fb: FormBuilder) {
+  constructor(
+    private apiService: ApiService, 
+    private globalService: GlobalService, 
+    private modalService: NgbModal, 
+    private genericModalService: ModalService, 
+    public activeModal: NgbActiveModal, 
+    private fb: FormBuilder,
+    private Token: TokenService
+    ) {
     this.buildSendForm();
     this.buildSendToSidechainForm();
   }
@@ -53,6 +63,22 @@ export class SendComponent implements OnInit, OnDestroy {
   private transaction: TransactionBuilding;
   private walletBalanceSubscription: Subscription;
   public open = 'XELS';
+  public walletName = this.globalService.getWalletName();
+  public token_sending_err = '';
+  public token_sending_success = '';
+  public token_sending_tx_id = '';
+
+  public tokenSendForm = new FormGroup({
+    token_name: new FormControl('token_name',[
+      Validators.required
+    ]),
+    to_addrs:new FormControl('',[
+      Validators.required
+    ]),
+    token_amount: new FormControl('',[
+      Validators.required
+    ])
+  })
 
   ngOnInit() {
     this.sidechainEnabled = this.globalService.getSidechainEnabled();
@@ -78,6 +104,24 @@ export class SendComponent implements OnInit, OnDestroy {
 
   public changeCoin(coin){
     this.open = coin;
+  }
+
+  async sendToken(open){
+    let token = Object.create(this.Token);;
+    token.initialize(token_config[open].contract,token_config[open].abi,'mainnet')
+    let wallet = this.Token.getLocalWallet(this.walletName,open);
+    if(this.tokenSendForm.valid){
+      try{
+        let res = await token.transfer(wallet.address,wallet.privateKey,this.tokenSendForm.value.to_addrs,this.tokenSendForm.value.token_amount)
+        this.token_sending_success = this.tokenSendForm.value.token_amount+' Token successfully send to '+this.tokenSendForm.value.to_addrs;
+        this.token_sending_tx_id = res.txId;
+      }catch(err){
+        if(err.message){
+          this.token_sending_err = err.message;
+        }
+        console.log(err);
+      }
+    }
   }
 
   private buildSendForm(): void {

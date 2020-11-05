@@ -174,11 +174,44 @@
         </ngb-tab>
       </ngb-tabset>
     </div>
-    <div *ngIf="open=='SELS'">
-      SELS FORM
-    </div>
-    <div *ngIf="open=='BELS'">
-      BELS FORM
+    <div *ngIf="open=='SELS' || open=='BELS' ">
+      <form [formGroup]="tokenSendForm" (ngSubmit)="sendToken(open)">
+        <div class="row form-wrapper">
+          <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="token_sending_err!=''">{{token_sending_err}}</div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="alert alert-success" *ngIf="token_sending_success!=''">{{token_sending_success}}</div>
+            <div class="alert alert-success" *ngIf="token_sending_tx_id!=''">{{token_sending_tx_id}}</div>
+          </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="to_addrs">To Address</label>
+                    <input type="hidden" class="form-control" value="{{open}}" name="token_name" required="required" formControlName="token_name"/>
+                    <input type="text" class="form-control" placeholder="To Address *" value="" name="to_addrs" required="required" formControlName="to_addrs"/>
+                    <div *ngIf="this.tokenSendForm.controls['to_addrs'].invalid && this.tokenSendForm.controls['to_addrs'].touched">
+                        <small class="text-danger"><i>To Address is required.</i></small>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-md-12" >
+              <div class="form-group">
+                  <label for="token_amount">Amount</label>
+                  <input type="text" class="form-control" placeholder="Your BELS pk *" value="" name="token_amount" required="required" formControlName="token_amount"/>
+                  <div *ngIf="this.tokenSendForm.controls['token_amount'].invalid && this.tokenSendForm.controls['token_amount'].touched">
+                      <small class="text-danger"><i>Amount is required.</i></small>
+                  </div>
+              </div>
+          </div>
+        
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary btn-block">Send Now</button>
+            </div>
+        </div>
+      </form>
     </div>
   </div>
   <!-- /TABS -->
