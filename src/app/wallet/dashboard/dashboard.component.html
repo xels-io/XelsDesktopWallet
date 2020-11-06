@@ -7,11 +7,17 @@
                   <div class="card-header">Hybrid-PoW-PoS Mining Info</div>
                   <div class="card-body">
                     <div class="alert alert-info text-center" role="alert">Unlock your wallet to start hybrid mining</div>
-                    <form class="form-inline mb-3" [formGroup]="stakingForm">
-                      <div class="form-group">
-                        <label for="inputPassword" class="sr-only">Password</label>
-                        <input type="password" formControlName="walletPassword" class="form-control" id="inputPassword" placeholder="Password">
-                        <button type="button" id="flipcard" class="btn btn-outline-primary ml-2" [disabled]="isStarting || !stakingForm.valid" (click)="startStaking()">Unlock</button>
+                    <form class="mb-3" [formGroup]="stakingForm">
+                      <div class="row">
+                        <div class="col-lg-8 col-md-12">
+                          <div class="form-group">
+                            <label for="inputPassword" class="sr-only">Password</label>
+                            <input type="password" formControlName="walletPassword" class="form-control" id="inputPassword" placeholder="Password">
+                          </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                          <button type="button" id="flipcard" class="btn btn-outline-primary w-100" [disabled]="isStarting || !stakingForm.valid" (click)="startStaking()">Unlock</button>
+                        </div>
                       </div>
                     </form>
                   </div>
@@ -40,10 +46,12 @@
           <div class="row d-flex align-items-center">
             <div class="col-12 text-center">
               <h5>Available Balance</h5>
-              <p class="lead bg-success text-white mb-0">
-                <strong>{{ (confirmedBalance | coinNotation) || (0 | coinNotation) }}</strong>
-                <small class="text-uppercase"> {{ coinUnit }}</small>
-              </p>
+              <div class="card">
+                <p class="lead alert-info mb-0">
+                  <strong>{{ (confirmedBalance | coinNotation) || (0 | coinNotation) }}</strong>
+                  <small class="text-uppercase"> {{ coinUnit }}</small>
+                </p>
+              </div>
               <ul class="list-unstyled">
                 <!-- <li><strong>{{ (awaitingMaturity | coinNotation) || (0 | coinNotation) }}</strong><em> (staking)</em></li> -->
                 <li><strong>{{ (unconfirmedBalance | coinNotation) || (0 | coinNotation) }}</strong><em> (unconfirmed)</em></li>
@@ -51,16 +59,20 @@
               </ul>
 
               <div id="tokens">
-                <div class="lead bg-success text-white mb-3" *ngIf="importBels==false">
-                  <strong>{{sels}}</strong>
-                  <small class="text-uppercase">SELS</small>
+                <div class="card">
+                  <div class="lead alert-info" *ngIf="importBels==false">
+                    <strong>{{sels}}</strong>
+                    <small class="text-uppercase">SELS</small>
+                  </div>
                 </div>
-                <div class="lead bg-success text-white mb-3" *ngIf="importBels==false">
-                  <strong>{{bels}}</strong>
-                  <small class="text-uppercase">BELS</small>
+                <div class="card">
+                  <div class="lead alert-info" *ngIf="importBels==false">
+                    <strong>{{bels}}</strong>
+                    <small class="text-uppercase">BELS</small>
+                  </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="m-3">
                   <button type="button" class="btn btn-outline-primary" (click)="openEthImportDialog()" >Import XELS & BELS Address</button>
                 </div>
               </div>

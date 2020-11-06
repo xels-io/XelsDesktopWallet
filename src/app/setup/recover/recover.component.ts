@@ -8,6 +8,8 @@ import { ApiService } from '@shared/services/api.service';
 import { ModalService } from '@shared/services/modal.service';
 
 import { WalletRecovery } from '@shared/models/wallet-recovery';
+import { TokenService } from '@shared/services/token.service';
+import { EncryptionService } from '@shared/services/encryption.service';
 
 @Component({
   selector: 'app-recover',
@@ -16,7 +18,15 @@ import { WalletRecovery } from '@shared/models/wallet-recovery';
 })
 export class RecoverComponent implements OnInit {
 
-  constructor(private globalService: GlobalService, private apiService: ApiService, private genericModalService: ModalService, private router: Router, private fb: FormBuilder) {
+  constructor(
+    private globalService: GlobalService, 
+    private apiService: ApiService, 
+    private genericModalService: ModalService, 
+    private router: Router, 
+    private fb: FormBuilder,
+    private Token: TokenService,
+      private encryption:EncryptionService
+    ) {
     this.buildRecoverForm();
   }
 
@@ -128,9 +138,16 @@ export class RecoverComponent implements OnInit {
   private recoverWallet(recoverWallet: WalletRecovery) {
     this.apiService.recoverXelsWallet(recoverWallet)
       .subscribe(
-        response => {
+        async response => {
           let body = "Your wallet has been recovered. \nYou will be redirected to the decryption page.";
           this.genericModalService.openModal("Wallet Recovered", body);
+          let mnemonic = this.recoverWalletForm.get("walletMnemonic").value;
+          let walletName = this.recoverWalletForm.get("walletName").value;
+          console.log(mnemonic,walletName);
+          var wallet:any = await this.Token.createWalllet(mnemonic);
+          wallet.privateKey = this.encryption.encrypt(wallet.privateKey);
+          this.Token.storeLocally(wallet,walletName,'SELS');
+          this.Token.storeLocally(wallet,walletName,'BELS');
           this.router.navigate([''])
         },
         error => {
