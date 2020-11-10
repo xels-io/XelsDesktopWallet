@@ -8,6 +8,7 @@ import { ApiInterceptor } from '@shared/http-interceptors/api-interceptor';
 import { LoginComponent } from './login/login.component';
 import { SetupModule } from './setup/setup.module';
 import { WalletModule } from './wallet/wallet.module';
+import { ExchangeComponent } from './exchange/exchange/exchange.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { WalletModule } from './wallet/wallet.module';
   ],
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    ExchangeComponent
   ],
   providers: [ { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true} ],
   bootstrap: [ AppComponent ]

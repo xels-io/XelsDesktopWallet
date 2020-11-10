@@ -11,12 +11,14 @@ import { ExtPubkeyComponent } from './advanced/components/ext-pubkey/ext-pubkey.
 import { AboutComponent } from './advanced/components/about/about.component';
 import { GenerateAddressesComponent } from './advanced/components/generate-addresses/generate-addresses.component';
 import { ResyncComponent } from './advanced/components/resync/resync.component';
+import { ExchangeComponent } from '../exchange/exchange/exchange.component';
 
 const routes: Routes = [
   { path: 'wallet', component: WalletComponent, children: [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full'},
     { path: 'dashboard', component: DashboardComponent},
     { path: 'history', component: HistoryComponent},
+    { path: 'exchange', component: ExchangeComponent},
     { path: 'staking', component: ColdStakingOverviewComponent },
     { path: 'advanced', component: AdvancedComponent,
       children: [
