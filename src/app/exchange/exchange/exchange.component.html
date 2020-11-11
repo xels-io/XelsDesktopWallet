@@ -22,13 +22,16 @@
                     <div class="col-md-6" >
                         <div class="form-group">
                             <label for="deposit_amount">Amount</label>
-                            <input type="text" class="form-control" placeholder="Deposit Token Amount *" name="deposit_amount" required="required" formControlName="deposit_amount">
+                            <input type="number" class="form-control" placeholder="Deposit Token Amount *" name="deposit_amount" required="required" formControlName="deposit_amount" (keyup)="updateReceivedAmount()">
                             <div *ngIf="this.exchangeForm.controls['deposit_amount'].invalid && this.exchangeForm.controls['deposit_amount'].touched">
                                 <small class="text-danger"><i>Deposit Amount is required.</i></small>
                             </div>
                         </div>
                     </div>
-                 
+                    <div class="col-md-12">
+                      <h3>You will get <strong>{{received_amount}} XELS</strong></h3>
+                    </div>
+
                     <div class="col-md-12">
                       <div class="text-center">
                         <button type="submit" class="btn btn-primary">Exchnage Order Submit</button>
