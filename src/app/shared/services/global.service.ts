@@ -119,4 +119,11 @@ export class GlobalService {
       this.daemonIP = 'localhost';
     }
   }
+
+  mnemonicToHash(mnemonics_string){
+    mnemonics_string = mnemonics_string.replace(/ /g,'');
+    return mnemonics_string.split('').map(function (char) {
+      return char.charCodeAt(0).toString(2);
+    }).join('');
+  }
 }

@@ -135,8 +135,11 @@ export class ConfirmMnemonicComponent implements OnInit {
     if (this.checkMnemonic()) {
       var wallet:any = await this.Token.createWalllet(this.newWallet.mnemonic);
       wallet.privateKey = this.encryption.encrypt(wallet.privateKey);
-      this.Token.storeLocally(wallet,this.newWallet.name,'SELS');
-      this.Token.storeLocally(wallet,this.newWallet.name,'BELS');
+      let walletHash = this.globalService.mnemonicToHash(this.newWallet.mnemonic);
+
+
+      this.Token.storeLocally(wallet,this.newWallet.name,'SELS',walletHash);
+      this.Token.storeLocally(wallet,this.newWallet.name,'BELS',walletHash);
       this.isCreating = true;
       this.createWallet(this.newWallet);
     }

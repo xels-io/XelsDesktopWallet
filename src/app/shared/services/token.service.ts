@@ -47,26 +47,41 @@ export class TokenService {
     let wallet = {address:account.address,privateKey:account.privateKey};
     return wallet; 
   }
-  storeLocally(wallet,user,token){
+  storeLocally(wallet,walletName,tokenSymbol,walletHash){
       let walletsString = localStorage.getItem('wallets');
       let wallets = {};
       if(walletsString){
         wallets = JSON.parse(walletsString);
       }
-      if(!wallets[user]) wallets[user] = {};
-      wallets[user][token] = wallet;
+      if(!wallets[walletName]) wallets[walletName] = {};
+      wallets[walletName][tokenSymbol] = wallet;
+      wallets[walletName]['hash'] = walletHash;
       localStorage.setItem('wallets',JSON.stringify(wallets));
   }
-  getLocalWallet(user,token){
+  getLocalWallet(walletName,tokenSymbol){
     let walletsString = localStorage.getItem('wallets');
     let wallets = {};
     if(walletsString){
       wallets = JSON.parse(walletsString);
     }
-    if(!wallets[user]) return null;
+    if(!wallets[walletName]) return null;
     
-    if(wallets[user][token]){
-        return wallets[user][token] 
+    if(wallets[walletName][tokenSymbol]){
+        return wallets[walletName][tokenSymbol] 
+    }else{
+        return null;
+    }
+  }
+  getLocalWalletDetails(walletName){
+    let walletsString = localStorage.getItem('wallets');
+    let wallets = {};
+    if(walletsString){
+      wallets = JSON.parse(walletsString);
+    }
+    if(!wallets[walletName]) return null;
+    
+    if(wallets[walletName]){
+        return wallets[walletName]; 
     }else{
         return null;
     }
