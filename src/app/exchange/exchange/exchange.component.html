@@ -1,5 +1,6 @@
 <section id="GUI" class="light">
   <section id="content" class="col-11 mx-auto">
+
       <div class="jumbotron jumbotron-fluid">
         <div class="row">
           <div class="col-8 mx-auto">
@@ -42,9 +43,39 @@
             </div>
           </div>
         </div>
-        
-
       </div>
+
+
+      <div class="jumbotron jumbotron-fluid">
+        <div class="row">
+          <div class="col-12 mx-auto">
+            <div class="card p-3">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <td class="text-left">Order Id</td>
+                    <td class="text-left">Deposit</td>
+                    <td class="text-left">Recived</td>
+                    <td class="text-left">Tx Id</td>
+                    <td class="text-left">Status</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of rows | paginate: { itemsPerPage: 10, currentPage: pageNumber }">
+                    <td class="text-left">{{ row.id }}</td>
+                    <td class="text-left">{{ row.deposit_address }} ({{ row.deposit_amount+' '+row.deposit_symbol }})</td>
+                    <td class="text-left">{{ row.xels_address }} ({{ row.xels_amount+' XELS' }})</td>
+                    <td class="text-left">{{ row.transaction_id }}</td>
+                    <td class="text-left">{{ row.status }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- <pagination-controls (pageChange)="pageNumber = $event"></pagination-controls> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
   </section>
 </section>
 <!-- /GUI-->
