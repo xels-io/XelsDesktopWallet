@@ -143,11 +143,13 @@ export class RecoverComponent implements OnInit {
           this.genericModalService.openModal("Wallet Recovered", body);
           let mnemonic = this.recoverWalletForm.get("walletMnemonic").value;
           let walletName = this.recoverWalletForm.get("walletName").value;
-          console.log(mnemonic,walletName);
+
+          let walletHash = this.globalService.mnemonicToHash(mnemonic);
+
           var wallet:any = await this.Token.createWalllet(mnemonic);
           wallet.privateKey = this.encryption.encrypt(wallet.privateKey);
-          this.Token.storeLocally(wallet,walletName,'SELS');
-          this.Token.storeLocally(wallet,walletName,'BELS');
+          this.Token.storeLocally(wallet,walletName,'SELS',walletHash);
+          this.Token.storeLocally(wallet,walletName,'BELS',walletHash);
           this.router.navigate([''])
         },
         error => {

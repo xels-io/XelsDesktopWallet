@@ -12,27 +12,29 @@
 <div class="modal-body">
   <form [formGroup]="importForm" (ngSubmit)="importNow()">
     <div class="row form-wrapper">
-        <div class="col-md-6">
+        
+        <div class="col-md-12">
             <div class="form-group">
-                <label for="from">From</label>
-                <select class="form-control" name="from" required="required" formControlName="from" (change)="updateBy()">
-                  <option value="mnemonic">Xels Mnemonic</option>
-                  <option value="pk">Private key</option>
-                </select>
-                <div *ngIf="this.importForm.controls['from'].invalid && this.importForm.controls['from'].touched">
-                    <small class="text-danger"><i>From is required.</i></small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12" *ngIf="by_mnemonic">
-            <div class="form-group">
-                <label for="deposit">Mnemonic</label>
+                <label for="deposit">Your Wallet(Xels) Mnemonic</label>
                 <textarea type="text" class="form-control" placeholder="Xels Wallet Mnemonic *" name="mnemonic" required="required" formControlName="mnemonic"></textarea>
                 <div *ngIf="this.importForm.controls['mnemonic'].invalid && this.importForm.controls['mnemonic'].touched">
                     <small class="text-danger"><i>Deposit Amount is required.</i></small>
                 </div>
             </div>
         </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="from">
+                    <input type="checkbox" class="" [value]="true" name="from" formControlName="from" (change)="updateBy()">
+                    Token address generate from the Mnemonics
+                </label>
+                <div *ngIf="this.importForm.controls['from'].invalid && this.importForm.controls['from'].touched">
+                    <small class="text-danger"><i>From is required.</i></small>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-12" *ngIf="!by_mnemonic">
             <div class="form-group">
                 <label for="sels_pk">SELS Private Key</label>
