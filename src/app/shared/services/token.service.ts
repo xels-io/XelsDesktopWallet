@@ -262,7 +262,7 @@ transfer (fromAddress,pKey,toAddress,amount){
                                     }// if balance is available
                                     else{
                                         resData.error = 1;
-                                        resData.message = 'Insufficient balance for gas.';
+                                        resData.message = 'You have insufficient ethereum balance for gas.';
                                         reject(resData);
                                     }
 

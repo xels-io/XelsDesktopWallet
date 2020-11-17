@@ -2,7 +2,7 @@
   <section id="content" class="col-11 mx-auto">
 
       <div class="jumbotron jumbotron-fluid">
-        <div class="row">
+        <div class="row mb-3">
           <div class="col-8 mx-auto">
             <div class="card p-3">
               <form [formGroup]="exchangeForm" (ngSubmit)="exchangeNow()">
@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                      <h3>You will get <strong>{{received_amount}} XELS</strong></h3>
+                      <h3>You will get <strong>{{received_amount.toFixed(4)}} XELS</strong></h3>
                     </div>
 
                     <div class="col-md-12">
@@ -40,42 +40,48 @@
                     </div>
                 </div>
               </form>
+
+              <div class="alert {{message.class}} mt-3" *ngIf="message.status">{{message.message}}</div>
             </div>
           </div>
         </div>
-      </div>
 
-
-      <div class="jumbotron jumbotron-fluid">
-        <div class="row">
-          <div class="col-12 mx-auto">
-            <div class="card p-3">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <td class="text-left">Order Id</td>
-                    <td class="text-left">Deposit</td>
-                    <td class="text-left">Recived</td>
-                    <td class="text-left">Tx Id</td>
-                    <td class="text-left">Status</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let row of rows | paginate: { itemsPerPage: 10, currentPage: pageNumber }">
-                    <td class="text-left">{{ row.id }}</td>
-                    <td class="text-left">{{ row.deposit_address }} ({{ row.deposit_amount+' '+row.deposit_symbol }})</td>
-                    <td class="text-left">{{ row.xels_address }} ({{ row.xels_amount+' XELS' }})</td>
-                    <td class="text-left">{{ row.transaction_id }}</td>
-                    <td class="text-left">{{ row.status }}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <!-- <pagination-controls (pageChange)="pageNumber = $event"></pagination-controls> -->
+        <div class="row d-flex align-items-center">
+          <div class="col-12 text-center">
+            <div class="card">
+              <div class="card-header">Latest Transactions</div>
+              <div class="card-body">
+                <table class="table table-sm text-black">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Order Id</th>
+                      <th class="text-left">Deposit</th>
+                      <th class="text-left">Recived</th>
+                      <th class="text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of rows | paginate: { itemsPerPage: 10, currentPage: pageNumber }">
+                      <td class="text-left">{{ row.id }}</td>
+                      <td class="text-left">{{ row.deposit_address }} ({{ row.deposit_amount+' '+row.deposit_symbol }})</td>
+                      <td class="text-left">{{ row.xels_address }} ({{ row.xels_amount+' XELS' }})</td>
+                      <td class="text-left">{{ row.status }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
+
+
       </div>
 
   </section>
 </section>
 <!-- /GUI-->
+
+
+
+
+
