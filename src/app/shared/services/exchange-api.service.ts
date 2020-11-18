@@ -18,4 +18,7 @@ export class ExchangeApiService {
   getOrders(user_code){
     return api.post('/api/getOrders',{user_code});
   }
+  getOrder(orderId){
+    return api.get('/api/getOrder/'+orderId);
+  }
 }

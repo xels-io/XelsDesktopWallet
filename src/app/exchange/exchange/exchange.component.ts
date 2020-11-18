@@ -18,11 +18,16 @@ export class ExchangeComponent implements OnInit {
   received_amount = 0;
   walletName;
   tokenWalletDetails;
-  pageNumber = 1;
+  public pageNumber: number = 1;
   message = {
     status:false,
     class:'alert-success',
     message:''
+  }
+  status = {
+    0:'Wating for deposit',
+    1:'Pending Exchange',
+    2:'Complete'
   }
   exchangeForm = new FormGroup({
     from: new FormControl('',[
@@ -66,26 +71,7 @@ export class ExchangeComponent implements OnInit {
     this.exApi.newOrder(sendData).then(async res=>{
       let data = res.data;
       this.updateExchangeList()
-      let token = Object.create(this.Token);
-      let mWallet = this.tokenWalletDetails[sendData.deposit_symbol];
-
-      mWallet.privateKey = this.encryption.decrypt(mWallet.privateKey);
-      
-      token.initialize(token_config[sendData.deposit_symbol].contract,token_config[sendData.deposit_symbol].abi,'mainnet');
-      try{
-        let tx = await token.transfer(mWallet.address,mWallet.privateKey,data.deposit_address,sendData.deposit_amount);
-        console.log('Tx:',tx);
-        this.message.status=true;
-        this.message.class='alert-success';
-        this.message.message='Exchange order successfully submitted. You will get the desired XELS soon';
-        
-      }catch(err){
-        this.message.status=true;
-        this.message.class='alert-danger';
-        this.message.message = 'Order successfully submitted.Token does not transfered.';
-        this.message.message+=(err.message)?err.message:'Something Went wrong to transfer token';
-        console.log(err)
-      }
+      this.deposit(sendData.deposit_symbol,sendData.deposit_amount,data.deposit_address);
     }).catch(err=>{
       console.log(err)
       this.message.status=true;
@@ -98,6 +84,49 @@ export class ExchangeComponent implements OnInit {
       this.received_amount = this.exchangeForm.value.deposit_amount*0.1;
     }else{
       this.received_amount = 0;
+    }
+  }
+
+  async depositNow(orderId){
+    console.log(orderId);
+    let res = await this.exApi.getOrder(orderId);
+    let order = res.data;
+    if(!order.id){
+      this.message.status=true;
+      this.message.class='alert-danger';
+      this.message.message = 'Your provided Order Id: <b>'+orderId+'</b> is not found!';
+      return false;
+    }
+    this.deposit(order.deposit_symbol,order.deposit_amount,order.deposit_address);
+
+  }
+
+  private async deposit(symbol,amount,toAddress){
+    let token = Object.create(this.Token);
+    let mWallet = this.tokenWalletDetails[symbol];
+    if(!mWallet){
+      this.message.status=true;
+      this.message.class='alert-danger';
+      this.message.message = 'Please import valid token address or send <b>'+amount+' '+symbol+'</b> to <b>'+toAddress+'</b>';
+      return false;
+    }
+
+    mWallet.privateKey = this.encryption.decrypt(mWallet.privateKey);
+    
+    token.initialize(token_config[symbol].contract,token_config[symbol].abi,'mainnet');
+    try{
+      let tx = await token.transfer(mWallet.address,mWallet.privateKey,toAddress,amount);
+      console.log('Tx:',tx);
+      this.message.status=true;
+      this.message.class='alert-success';
+      this.message.message='Exchange order successfully submitted. You will get the desired XELS soon';
+      
+    }catch(err){
+      this.message.status=true;
+      this.message.class='alert-danger';
+      this.message.message = 'Order successfully submitted.Token does not transfered.';
+      this.message.message+=(err.message)?err.message:'Something Went wrong to transfer token';
+      console.log(err)
     }
   }
 

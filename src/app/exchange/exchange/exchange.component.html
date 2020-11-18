@@ -41,17 +41,19 @@
                 </div>
               </form>
 
-              <div class="alert {{message.class}} mt-3" *ngIf="message.status">{{message.message}}</div>
             </div>
           </div>
         </div>
-
+        <div class="row text-center mx-auto">
+          <p class="alert {{message.class}} mt-3 w-100" *ngIf="message.status" [innerHTML]="message.message"></p>
+        </div>
         <div class="row d-flex align-items-center">
           <div class="col-12 text-center">
             <div class="card">
               <div class="card-header">Latest Transactions</div>
               <div class="card-body">
-                <table class="table table-sm text-black">
+                
+                <table class="table table-sm" *ngIf="rows.length; else noExchange">
                   <thead>
                     <tr>
                       <th class="text-left">Order Id</th>
@@ -65,10 +67,14 @@
                       <td class="text-left">{{ row.id }}</td>
                       <td class="text-left">{{ row.deposit_address }} ({{ row.deposit_amount+' '+row.deposit_symbol }})</td>
                       <td class="text-left">{{ row.xels_address }} ({{ row.xels_amount+' XELS' }})</td>
-                      <td class="text-left">{{ row.status }}</td>
+
+                      <td class="text-left" *ngIf="row.status==0"><button class="btn btn-sm btn-primary" (click)="depositNow(row.id)">Deposit Now</button></td>
+                      <td class="text-left" *ngIf="row.status!=0">{{ status[row.status] }}</td>
                     </tr>
                   </tbody>
                 </table>
+                <pagination-controls (pageChange)="pageNumber = $event"></pagination-controls>
+                <ng-template #noExchange><em class="muted">Looks like you haven't made any exchange yet.</em></ng-template>
               </div>
             </div>
           </div>
