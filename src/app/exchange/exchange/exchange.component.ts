@@ -8,6 +8,7 @@ import { ExchangeApiService } from '@shared/services/exchange-api.service';
 import { send } from 'process';
 import { token_config } from '../../config/token';
 import { EncryptionService } from '@shared/services/encryption.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-exchange',
@@ -19,6 +20,7 @@ export class ExchangeComponent implements OnInit {
   walletName;
   tokenWalletDetails;
   public pageNumber: number = 1;
+  clicked = false;
   message = {
     status:false,
     class:'alert-success',
@@ -43,7 +45,8 @@ export class ExchangeComponent implements OnInit {
     private Token : TokenService,
     private apiService: ApiService,
     private exApi:ExchangeApiService,
-    private encryption: EncryptionService
+    private encryption: EncryptionService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -87,17 +90,25 @@ export class ExchangeComponent implements OnInit {
     }
   }
 
-  async depositNow(orderId){
-    console.log(orderId);
-    let res = await this.exApi.getOrder(orderId);
-    let order = res.data;
-    if(!order.id){
+  async depositNow(event,orderId){
+    this.clicked = true;
+    try{
+      let res = await this.exApi.getOrder(orderId);
+      let order = res.data;
+      if(!order.id){
+        this.message.status=true;
+        this.message.class='alert-danger';
+        this.message.message = 'Your provided Order Id: <b>'+orderId+'</b> is not found!';
+      }else{
+        this.deposit(order.deposit_symbol,order.deposit_amount,order.deposit_address);
+      }
+    }catch(err){
       this.message.status=true;
       this.message.class='alert-danger';
-      this.message.message = 'Your provided Order Id: <b>'+orderId+'</b> is not found!';
-      return false;
+      this.message.message = 'Something went wrong! Please try again later';
     }
-    this.deposit(order.deposit_symbol,order.deposit_amount,order.deposit_address);
+    this.updateExchangeList();
+    this.clicked = false;
 
   }
 
