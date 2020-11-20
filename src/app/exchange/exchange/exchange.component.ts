@@ -56,15 +56,23 @@ export class ExchangeComponent implements OnInit {
   }
 
   updateExchangeList(){
-    this.exApi.getOrders(this.tokenWalletDetails['hash']).then(res=>{
-      let data = res.data;
-      this.rows = data;
-    }).catch(err=>{
-      console.log(err)
-    })
+    if(this.tokenWalletDetails['hash']){
+      this.exApi.getOrders(this.tokenWalletDetails['hash']).then(res=>{
+        let data = res.data;
+        this.rows = data;
+      }).catch(err=>{
+        console.log(err)
+      })
+    }
   }
 
   async exchangeNow(){
+    if(!this.tokenWalletDetails['hash']){
+      this.message.status=true;
+      this.message.class='alert-danger';
+      this.message.message = 'Your ethereum address is not imported properly. Please import your address again';
+      return false;
+    }
     let sendData = {
       user_code:this.tokenWalletDetails['hash'],
       xels_address:await this.getUnusedReceiveAddresses(),
