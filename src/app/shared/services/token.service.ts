@@ -64,12 +64,12 @@ export class TokenService {
     if(walletsString){
       wallets = JSON.parse(walletsString);
     }
-    if(!wallets[walletName]) return null;
+    if(!wallets[walletName]) return {};
     
     if(wallets[walletName][tokenSymbol]){
         return wallets[walletName][tokenSymbol] 
     }else{
-        return null;
+        return {};
     }
   }
   getLocalWalletDetails(walletName){
@@ -78,12 +78,12 @@ export class TokenService {
     if(walletsString){
       wallets = JSON.parse(walletsString);
     }
-    if(!wallets[walletName]) return null;
+    if(!wallets[walletName]) return {};
     
     if(wallets[walletName]){
         return wallets[walletName]; 
     }else{
-        return null;
+        return {};
     }
   }
 

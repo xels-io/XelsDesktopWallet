@@ -110,6 +110,10 @@ export class SendComponent implements OnInit, OnDestroy {
     let token = Object.create(this.Token);;
     token.initialize(token_config[open].contract,token_config[open].abi,'mainnet')
     let wallet = this.Token.getLocalWallet(this.walletName,open);
+    if(!wallet.address){
+      this.token_sending_err = 'You have not imported yet';
+      return;
+    }
     if(this.tokenSendForm.valid){
       try{
         let res = await token.transfer(wallet.address,wallet.privateKey,this.tokenSendForm.value.to_addrs,this.tokenSendForm.value.token_amount)

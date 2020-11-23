@@ -46,8 +46,11 @@ export class ReceiveComponent {
     this.sidechainEnabled = this.globalService.getSidechainEnabled();
     this.getUnusedReceiveAddresses();
     this.userName = this.globalService.getWalletName();
-    this.sels_address = this.Token.getLocalWallet(this.userName,'SELS').address;
-    this.bels_address = this.Token.getLocalWallet(this.userName,'BELS').address;
+    let sWallet = this.Token.getLocalWallet(this.userName,'SELS');
+    this.sels_address = sWallet.address || '';
+    this.userName = this.globalService.getWalletName();
+    let bWallet = this.Token.getLocalWallet(this.userName,'BELS');
+    this.bels_address = bWallet.address || '';
   }
 
   public changeCoin(coin){

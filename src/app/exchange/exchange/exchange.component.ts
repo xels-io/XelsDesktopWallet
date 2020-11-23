@@ -67,7 +67,7 @@ export class ExchangeComponent implements OnInit {
   }
 
   async exchangeNow(){
-    if(!this.tokenWalletDetails['hash']){
+    if(this.tokenWalletDetails['hash']==undefined){
       this.message.status=true;
       this.message.class='alert-danger';
       this.message.message = 'Your ethereum address is not imported properly. Please import your address again';

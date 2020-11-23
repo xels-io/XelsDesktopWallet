@@ -18,7 +18,7 @@
 
     <div *ngIf="open=='SELS'">
         <form *ngIf="!showAll">
-            <div class="myAddress row">
+            <div class="myAddress row" *ngIf="sels_address != ''">
                 <div class="mx-auto mb-2">
                     <ngx-qrcode [qrc-value]="sels_address" qrc-class="aclass" qrc-errorCorrectionLevel="L"></ngx-qrcode>
                 </div>
@@ -30,12 +30,15 @@
                     </button>
                 </div>
             </div>
+            <div class="myAddress row" *ngIf="sels_address == ''">
+                <h4 class="text-center w-100 p-5">You have not imported SELS address yet</h4>
+            </div>
         </form>
     </div>
 
     <div *ngIf="open=='BELS'">
         <form *ngIf="!showAll">
-            <div class="myAddress row">
+            <div class="myAddress row" *ngIf="bels_address != ''">
                 <div class="mx-auto mb-2">
                     <ngx-qrcode [qrc-value]="bels_address" qrc-class="aclass" qrc-errorCorrectionLevel="L"></ngx-qrcode>
                 </div>
@@ -46,6 +49,9 @@
                         <i class="lnr lnr-file-add"></i>
                     </button>
                 </div>
+            </div>
+            <div class="myAddress row" *ngIf="bels_address==''">
+                <h4 class="text-center w-100 p-5">You have not imported BELS address yet</h4>
             </div>
         </form>
     </div>

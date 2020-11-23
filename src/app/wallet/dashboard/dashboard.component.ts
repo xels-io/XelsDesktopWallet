@@ -99,12 +99,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let belsWallet = this.Token.getLocalWallet(this.walletName,'BELS')
     let selsWallet = this.Token.getLocalWallet(this.walletName,'SELS')
     
-    if(belsWallet){
+    if(belsWallet.address){
       this.importBels = false;
       this.bels_address = belsWallet.address;
       this.bels = await this.BelsToken.getBalance(belsWallet.address)
     }
-    if(selsWallet){
+    if(selsWallet.address){
       this.importSels = false;
       this.sels_address = selsWallet.address;
       this.sels = await this.BelsToken.getBalance(selsWallet.address)
