@@ -125,6 +125,8 @@ export class SendComponent implements OnInit, OnDestroy {
         }
         console.log(err);
       }
+    }else{
+      this.globalService.markFormGroupTouched(this.tokenSendForm);
     }
   }
 

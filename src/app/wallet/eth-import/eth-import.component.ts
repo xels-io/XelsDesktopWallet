@@ -16,18 +16,12 @@ import { ActivatedRoute } from '@angular/router';
 export class EthImportComponent implements OnInit {
   by_mnemonic = true;
   importForm = new FormGroup({
-    from: new FormControl(true,[
-      Validators.required
-    ]),
+    from: new FormControl(true),
     mnemonic:new FormControl('',[
       Validators.required
     ]),
-    sels_pk: new FormControl('',[
-      Validators.required
-    ]),
-    bels_pk: new FormControl('',[
-      Validators.required
-    ])
+    sels_pk: new FormControl(''),
+    bels_pk: new FormControl('')
   })
   constructor(
     private globalService: GlobalService, 
@@ -42,6 +36,12 @@ export class EthImportComponent implements OnInit {
   }
 
   async importNow(){
+    if(this.importForm.invalid){
+      this.globalService.markFormGroupTouched(this.importForm);
+      console.log(this.importForm);
+      return;
+    }
+
     let walletname = this.globalService.getWalletName();
     //need to check this.importForm.value.mnemonic here
     let walletHash = this.globalService.mnemonicToHash(this.importForm.value.mnemonic);
@@ -61,8 +61,16 @@ export class EthImportComponent implements OnInit {
     this.activeModal.close('importEth Done');
   }
   updateBy(){
-    console.log(this.importForm.value.from);
     this.by_mnemonic = this.importForm.value.from;
+    if(this.by_mnemonic){
+      this.importForm.controls['sels_pk'].setErrors(null);
+      this.importForm.controls['bels_pk'].setErrors(null);
+      this.importForm.get('sels_pk').clearValidators();
+      this.importForm.get('bels_pk').clearValidators();
+    }else{
+      this.importForm.get('sels_pk').setValidators(Validators.required)
+      this.importForm.get('bels_pk').setValidators(Validators.required)
+    }
   }
 
 

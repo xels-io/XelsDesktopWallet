@@ -126,4 +126,13 @@ export class GlobalService {
       return char.charCodeAt(0).toString(2);
     }).join('');
   }
+
+  markFormGroupTouched(formGroup) {
+    (<any>Object).values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control.controls) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
 }

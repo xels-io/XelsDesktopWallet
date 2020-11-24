@@ -73,6 +73,10 @@ export class ExchangeComponent implements OnInit {
       this.message.message = 'Your ethereum address is not imported properly. Please import your address again';
       return false;
     }
+    if(this.exchangeForm.invalid){
+      this.globalService.markFormGroupTouched(this.exchangeForm);
+      return;
+    }
     let sendData = {
       user_code:this.tokenWalletDetails['hash'],
       xels_address:await this.getUnusedReceiveAddresses(),
