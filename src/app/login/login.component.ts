@@ -72,13 +72,10 @@ export class LoginComponent implements OnInit {
     this.apiService.getWalletFiles()
       .subscribe(
         response => {
-          this.wallets = response.walletsFiles;
+          this.wallets = response.walletNames;
           this.globalService.setWalletPath(response.walletsPath);
           if (this.wallets.length > 0) {
             this.hasWallet = true;
-            for (let wallet in this.wallets) {
-              this.wallets[wallet] = this.wallets[wallet].slice(0, -12);
-            }
           } else {
             this.hasWallet = false;
           }

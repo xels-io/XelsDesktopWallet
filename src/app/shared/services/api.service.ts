@@ -77,7 +77,7 @@ export class ApiService {
    * Gets available wallets at the default path
    */
   getWalletFiles(): Observable<any> {
-    return this.http.get(this.xelsApiUrl + '/wallet/files').pipe(
+    return this.http.get(this.xelsApiUrl + '/wallet/list-wallets').pipe(
       catchError(err => this.handleHttpError(err))
     );
   }
@@ -256,24 +256,24 @@ export class ApiService {
       .set('opReturnAmount', data.recipients[0].amount)
       .set('feeType', data.feeType)
       .set('allowUnconfirmed', "true");
-    return this.http.get(this.xelsApiUrl + '/wallet/estimate-txfee', { params }).pipe(
-      catchError(err => this.handleHttpError(err))
-    );
-
-    // return this.http.post(this.xelsApiUrl + '/wallet/estimate-txfee', {
-    //   'walletName': data.walletName,
-    //   'accountName': data.accountName,
-    //   'recipients': [
-    //     {
-    //       'destinationAddress': data.recipients[0].destinationAddress,
-    //       'amount': data.recipients[0].amount
-    //     }
-    //   ],
-    //   'feeType': data.feeType,
-    //   'allowUnconfirmed': true
-    //  }).pipe(
+    // return this.http.get(this.xelsApiUrl + '/wallet/estimate-txfee', { params }).pipe(
     //   catchError(err => this.handleHttpError(err))
     // );
+
+    return this.http.post(this.xelsApiUrl + '/wallet/estimate-txfee', {
+      'walletName': data.walletName,
+      'accountName': data.accountName,
+      'recipients': [
+        {
+          'destinationAddress': data.recipients[0].destinationAddress,
+          'amount': data.recipients[0].amount
+        }
+      ],
+      'feeType': data.feeType,
+      'allowUnconfirmed': true
+     }).pipe(
+      catchError(err => this.handleHttpError(err))
+    );
   }
 
   /**
