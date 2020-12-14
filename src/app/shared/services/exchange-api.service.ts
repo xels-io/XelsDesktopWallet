@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000'
+  baseURL: 'https://exchange.xels.io'
 });
 api.defaults.headers.common['Authorization'] = 'xels-exchange-allowed-api';
 
