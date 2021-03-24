@@ -81,14 +81,10 @@ export class SendComponent implements OnInit, OnDestroy {
   })
 
   ngOnInit() {
-    this.sidechainEnabled = this.globalService.getSidechainEnabled();
-    if (this.sidechainEnabled) {
-      this.firstTitle = "Sidechain";
-      this.secondTitle = "Mainchain";
-    } else {
-      this.firstTitle = "Mainchain";
-      this.secondTitle = "Sidechain";
-    }
+    // this.sidechainEnabled = this.globalService.getSidechainEnabled();
+    this.sidechainEnabled = true;
+    this.firstTitle = "Mainchain";
+    this.secondTitle = "Sidechain";
     this.startSubscriptions();
     this.coinUnit = this.globalService.getCoinUnit();
     if (this.address) {

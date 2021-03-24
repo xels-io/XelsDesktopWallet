@@ -10972,4 +10972,9 @@ bs-daterangepicker-container {
   color:black;
 }
 
+ul.nav-pills .nav-item .nav-link {
+  color: #53b947;
+  border: 1px solid #53b947;
+}
+
 /*# sourceMappingURL=styles.css.map */
